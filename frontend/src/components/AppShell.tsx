@@ -8,6 +8,7 @@ import GoogleMapsProvider from './GoogleMapsProvider';
 import { Location } from '../types';
 import { AppDispatch, fetchForecast } from '../redux';
 import { useDispatch } from 'react-redux';
+import Forecast from './Forecast';
 
 // Define LatLngLiteral type
 type LatLngLiteral = {
@@ -63,13 +64,11 @@ const AppShell: React.FC = () => {
             width: '100%',
           }}
         >
-          {/* Location Autocomplete */}
           <Box
             id="map-page-locationAutocomplete-container"
             sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
           >
             <LocationAutocomplete
-              // onSetMapLocation={handleSetMapLocation}
               placeName={placeName || ""}
               onSetPlaceName={(name: string) => setPlaceName(name)}
               onSetGoogleLocation={(googlePlace: Location, placeName: string) =>
@@ -80,6 +79,7 @@ const AppShell: React.FC = () => {
               }
             />
           </Box>
+          <Forecast />
         </Box>
       </Paper>
     );

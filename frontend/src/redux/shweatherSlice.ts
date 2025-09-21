@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { DailyForecastDay, FetchForecastResponse, Forecast, RecentLocation } from '../types';
+import { DailyForecastDay, FetchForecastResponse, RecentLocation } from '../types';
 
 interface ShweatherState {
   dailyForecasts: DailyForecastDay[];
