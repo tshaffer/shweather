@@ -4,7 +4,6 @@ import {
   Box,
   IconButton,
   Typography,
-  useMediaQuery,
   Tooltip,
   Select,
   MenuItem,
@@ -38,7 +37,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
 
   const dispatch = useDispatch();
 
-  const isMobile = useMediaQuery('(max-width:768px)');
   const mapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -69,7 +67,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     if (currentLocation) {
       onSetMapLocation(currentLocation);
       setSelectedLocationKey(''); // Clear dropdown
-      // setShowCustomInput(false);
     }
   };
 
@@ -129,7 +126,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: isMobile ? 1 : 2,
+        gap: 2,
         width: '100%',
         flexWrap: 'wrap',
       }}
@@ -156,7 +153,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         onChange={handleLocationSelect}
         displayEmpty
         size="small"
-        sx={{ minWidth: isMobile ? 140 : 180, flexGrow: 1 }}
+        sx={{ minWidth: 180, flexGrow: 1 }}
       >
         <MenuItem value="" disabled>
           Select a location
@@ -179,8 +176,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             placeholder="Enter a location"
             style={{
               width: '100%',
-              padding: isMobile ? '8px' : '10px',
-              fontSize: isMobile ? '14px' : '16px',
+              padding: '10px',
+              fontSize: '16px',
               border: '1px solid #ccc',
               borderRadius: '4px',
               boxSizing: 'border-box',
@@ -193,7 +190,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         size="small"
         startIcon={<ManageAccountsIcon />}
         onClick={() => setManageDialogOpen(true)}
-        sx={{ marginLeft: isMobile ? 0 : 'auto', marginTop: isMobile ? 1 : 0 }}
+        sx={{ marginLeft: 'auto', marginTop: 0 }}
       >
         Manage Locations
       </Button>
