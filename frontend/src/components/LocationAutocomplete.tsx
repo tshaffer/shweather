@@ -26,18 +26,111 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { RecentLocation } from '../types';
 import { useSelector } from 'react-redux';
 import { selectRecentLocations, setRecentLocations } from '../redux';
+import { Location } from '../types';
 
 interface LocationAutocompleteProps {
-  onSetMapLocation: (mapLocation: google.maps.LatLngLiteral) => void;
+  // onSetMapLocation: (mapLocation: google.maps.LatLngLiteral) => void;
+  placeName: string;
+  onSetPlaceName: (placeName: string) => void;         // we'll set this to the exact dropdown label
+  onSetGoogleLocation: (googleLocation: Location, placeName: string) => void;
 }
 
-const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
-  onSetMapLocation,
-}) => {
+const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
+  const { placeName, onSetPlaceName, onSetGoogleLocation } = props;
 
   const dispatch = useDispatch();
 
-  const mapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  const predictionsByIdRef = useRef<Map<string, google.maps.places.AutocompletePrediction>>(
+    new Map()
+  );
+  const autocompleteServiceRef = useRef<google.maps.places.AutocompleteService | null>(null);
+  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+
+  useEffect(() => {
+    if (!('google' in window)) return;
+    if (!autocompleteServiceRef.current) {
+      autocompleteServiceRef.current = new google.maps.places.AutocompleteService();
+    }
+    if (!sessionTokenRef.current) {
+      sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
+    }
+  }, []);
+
+  function buildLocation(googlePlaceResult: google.maps.places.PlaceResult): Location {
+    const location: Location = {
+      googlePlaceId: googlePlaceResult.place_id!,
+      name: googlePlaceResult.name!,
+      geometry: {
+        location: {
+          lat: googlePlaceResult.geometry!.location!.lat(),
+          lng: googlePlaceResult.geometry!.location!.lng(),
+        },
+      },
+    };
+    return location;
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    onSetPlaceName(val); // keep your controlled input in sync
+
+    if (!autocompleteServiceRef.current) return;
+
+    const request: google.maps.places.AutocompletionRequest = {
+      input: val,
+      sessionToken: sessionTokenRef.current ?? undefined,
+      // You can add: componentRestrictions: { country: ['us'] }, types: ['geocode']
+    };
+
+    autocompleteServiceRef.current.getPlacePredictions(request, (predictions) => {
+      predictionsByIdRef.current.clear();
+      (predictions ?? []).forEach((p) => {
+        predictionsByIdRef.current.set(p.place_id, p);
+      });
+    });
+  };
+
+  const handlePlaceChanged = () => {
+    if (!autocompleteRef.current) return;
+
+    const place = autocompleteRef.current.getPlace() as google.maps.places.PlaceResult | undefined;
+    if (!place) return;
+    
+    // Prefer the *exact* label the user saw in the dropdown
+    const matchedPrediction = place.place_id
+      ? predictionsByIdRef.current.get(place.place_id)
+      : undefined;
+
+      let placeName: string = '';
+
+    // If we found it, set your controlled field to the exact dropdown label.
+    if (matchedPrediction?.description) {
+      placeName = matchedPrediction.description;
+    } else {
+      // Fallback: use PlaceResult fields if prediction cache missed
+      const fallback: string =
+        place.formatted_address ??
+        [place.name, place.vicinity].filter(Boolean).join(', ') ??
+        placeName;
+      placeName = fallback;
+    }
+
+    if (place.geometry?.location) {
+      const googlePlace: Location = buildLocation(place);
+      onSetGoogleLocation(googlePlace, placeName);
+    } else {
+      console.error('No place geometry found in handlePlaceChanged');
+    }
+
+    // Start a new session after a successful selection (best practice)
+    sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
+  };
+
+
+
+
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
@@ -64,15 +157,16 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
 
 
   const handleUseCurrentLocation = () => {
-    if (currentLocation) {
-      onSetMapLocation(currentLocation);
-      setSelectedLocationKey(''); // Clear dropdown
-    }
+    console.log('Use Current Location clicked');
+    // if (currentLocation) {
+    //   onSetMapLocation(currentLocation);
+    //   setSelectedLocationKey(''); // Clear dropdown
+    // }
   };
 
   const handleMapLocationChanged = () => {
-    if (mapAutocompleteRef.current) {
-      const place = mapAutocompleteRef.current.getPlace();
+    if (autocompleteRef.current) {
+      const place = autocompleteRef.current.getPlace();
       if (place?.geometry?.location && place.formatted_address) {
         const newCoordinates = {
           lat: place.geometry.location.lat(),
@@ -94,7 +188,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           localStorage.setItem('recentLocations', JSON.stringify(updatedLocations));
         }
 
-        onSetMapLocation(newCoordinates);
+        // onSetMapLocation(newCoordinates);
       } else {
         console.error('No place found in handleMapLocationChanged');
       }
@@ -112,13 +206,14 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   };
 
   const handleLocationSelect = (event: SelectChangeEvent<string>) => {
-    const key = event.target.value;
-    setSelectedLocationKey(key);
+    console.log('Location selected from dropdown');
+    // const key = event.target.value;
+    // setSelectedLocationKey(key);
 
-    const selected = recentLocations.find(loc => loc.label === key);
-    if (selected) {
-      onSetMapLocation({ lat: selected.lat, lng: selected.lng });
-    }
+    // const selected = recentLocations.find(loc => loc.label === key);
+    // if (selected) {
+    //   onSetMapLocation({ lat: selected.lat, lng: selected.lng });
+    // }
   };
 
   return (
@@ -166,24 +261,31 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       </Select>
 
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Autocomplete
-          onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
-          onPlaceChanged={handleMapLocationChanged}
-        >
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Enter a location"
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              boxSizing: 'border-box',
-            }}
-          />
-        </Autocomplete>
+      <Autocomplete
+        onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+        onPlaceChanged={handlePlaceChanged}
+        // Request only the fields you need to reduce quota/latency.
+        options={{
+          fields: ['place_id', 'name', 'formatted_address', 'geometry', 'vicinity'],
+          // componentRestrictions: { country: ['us'] },
+          // types: ['geocode'],
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Enter a location"
+          value={placeName}                     // controlled
+          onChange={handleInputChange}          // UPDATED
+          style={{
+            width: '100%',
+            padding: '10px',
+            fontSize: '16px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            boxSizing: 'border-box',
+          }}
+        />
+      </Autocomplete>
       </Box>
 
       <Button

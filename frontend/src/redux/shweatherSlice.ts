@@ -14,11 +14,11 @@ const initialState: ShweatherState = {
 
 export const fetchForecast = createAsyncThunk(
   'forecast/fetchForecast',
-  async ({ location: locationCoordinates, date, index }: { location: google.maps.LatLngLiteral; date: string; index: number }) => {
+  async ({ location: locationCoordinates }: { location: google.maps.LatLngLiteral }) => {
     const response = await axios.get('/api/v1/forecast', {
-      params: { location: JSON.stringify(locationCoordinates), date },
+      params: { location: JSON.stringify(locationCoordinates) },
     });
-    return { days: response.data.days, date, index };
+    return { days: response.data.days };
   }
 );
 

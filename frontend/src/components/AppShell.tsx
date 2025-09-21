@@ -1,10 +1,13 @@
 // AppShell.tsx
-import React, { JSX } from 'react';
+import React, { JSX, useState } from 'react';
 
 import { AppBar, Box, Container, CssBaseline, IconButton, Paper, Toolbar, Typography } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
+import { Location } from '../types';
+import { AppDispatch, fetchForecast } from '../redux';
+import { useDispatch } from 'react-redux';
 
 // Define LatLngLiteral type
 type LatLngLiteral = {
@@ -15,13 +18,25 @@ type LatLngLiteral = {
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
 
+    const dispatch = useDispatch<AppDispatch>();
+
+  const [placeName, setPlaceName] = useState('');
+
+  const handleChangeGooglePlace = async (
+    googlePlace: Location,
+    placeName: string,
+  ) => {
+    dispatch(fetchForecast({ location: googlePlace.geometry.location }));
+    // updateStop(index, { placeName, location: googlePlace });
+  };
+
   const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
     console.log('handleOpenSettingsDialog');
   };
 
-  function handleSetMapLocation(mapLocation: LatLngLiteral): void {
-    console.log('handleSetMapLocation called with mapLocation:', mapLocation);
-  }
+  // function handleSetMapLocation(mapLocation: LatLngLiteral): void {
+  //   console.log('handleSetMapLocation called with mapLocation:', mapLocation);
+  // }
 
   const renderLocationChoose = (): JSX.Element => {
 
@@ -54,7 +69,15 @@ const AppShell: React.FC = () => {
             sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
           >
             <LocationAutocomplete
-              onSetMapLocation={handleSetMapLocation}
+              // onSetMapLocation={handleSetMapLocation}
+              placeName={placeName || ""}
+              onSetPlaceName={(name: string) => setPlaceName(name)}
+              onSetGoogleLocation={(googlePlace: Location, placeName: string) =>
+                handleChangeGooglePlace(
+                  googlePlace,
+                  placeName,
+                )
+              }
             />
           </Box>
         </Box>
@@ -83,7 +106,7 @@ const AppShell: React.FC = () => {
         <Box id="mainAppContentArea" sx={{ flexGrow: 1, overflow: 'hidden' }}>
           {renderLocationChoose()}
         </Box>
-        
+
       </Box>
     </GoogleMapsProvider>
   );
