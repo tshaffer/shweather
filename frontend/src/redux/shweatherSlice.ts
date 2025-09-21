@@ -1,6 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { DailyForecastDay, FetchForecastResponse, Forecast } from '../types';
+import { DailyForecastDay, FetchForecastResponse, Forecast, RecentLocation } from '../types';
+
+interface ShweatherState {
+  dailyForecasts: DailyForecastDay[];
+  recentLocations: RecentLocation[];
+}
+
+const initialState: ShweatherState = {
+  dailyForecasts: [],
+  recentLocations: [],
+};
 
 export const fetchForecast = createAsyncThunk(
   'forecast/fetchForecast',
@@ -12,16 +22,15 @@ export const fetchForecast = createAsyncThunk(
   }
 );
 
-const initialState: Forecast = {
-  dailyForecasts: [],
-};
-
-const forecastSlice = createSlice({
-  name: 'forecast',
+const shweatherSlice = createSlice({
+  name: 'shweather',
   initialState,
   reducers: {
     setDailyForecasts(state, action: PayloadAction<DailyForecastDay[]>) {
       state.dailyForecasts = action.payload;
+    },
+    setRecentLocations: (state, action: PayloadAction<RecentLocation[]>) => {
+      state.recentLocations = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -40,7 +49,8 @@ const forecastSlice = createSlice({
 
 export const {
   setDailyForecasts,
-} = forecastSlice.actions;
+  setRecentLocations,
+} = shweatherSlice.actions;
 
-export default forecastSlice.reducer;
+export default shweatherSlice.reducer;
 
