@@ -4,7 +4,8 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import WeathersenPage from './components/ShweatherPage';
+import ShweatherPage from './components/ShweatherPage';
+import GoogleMapsProvider from './components/GoogleMapsProvider';
 import { initializeDiagnostics, loadEnvConfig } from './utilities';
 import { store } from './redux/store';
 
@@ -17,7 +18,9 @@ loadEnvConfig().then(() => {
     <StrictMode>
       <Provider store={store}>
         <BrowserRouter>
-            <WeathersenPage />
+          <GoogleMapsProvider>
+            <ShweatherPage />
+          </GoogleMapsProvider>
         </BrowserRouter>
       </Provider>
     </StrictMode>
