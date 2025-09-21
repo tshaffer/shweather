@@ -1,0 +1,165 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.table-head-fixed {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  /* Ensures header background remains visible */
+  z-index: 1;
+  /* Ensures header stays above table rows */
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  /* Ensure the container takes the full width */
+  padding: 20px;
+}
+
+.table-and-details-container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 160px);
+  /* Adjusted height to account for header, filters, etc. */
+}
+
+.scrollable-table-container {
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid #ccc;
+}
+
+.review-details,
+.map-container {
+  flex: 1;
+  overflow-y: auto;
+  height: 100%;
+  /* max-height: calc(100vh - 124px); */
+}
+
+/* .review-details,
+  .map-container {
+    height: auto;
+    margin-top: 10px;
+  } */
+.review-details {
+  margin-top: 10px;
+  padding: 12px;
+  box-shadow: none;
+  max-height: 260px;
+  /* max-height: calc(100vh - 646px); */
+}
+
+
+.full-width-container {
+  max-width: 90% !important;
+  padding: 20px;
+  max-height: calc(100vh - 124px);
+  /* Subtract AppBar height */
+  overflow: hidden;
+  /* Prevent overflow of content */
+  display: flex;
+  /* Ensure child elements can stretch */
+  flex-direction: column;
+}
+
+/* Dim the first three columns by default */
+.table-row-hover .dimmed {
+  opacity: 0.5;
+  /* Dimmed state */
+  transition: opacity 0.2s ease;
+  /* Smooth transition */
+}
+
+/* Restore normal state on hover */
+.table-row-hover:hover .dimmed {
+  opacity: 1;
+  /* Normal state */
+}
+
+.pac-container {
+  z-index: 2000 !important;
+}
+
+/* Add this at the end of App.css */
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .page-container {
+    flex-direction: column;
+    padding: 10px;
+    /* Reduce padding for mobile */
+  }
+
+  .table-and-details-container {
+    flex-direction: column;
+    height: auto;
+    /* Allow height to adjust automatically */
+  }
+
+  .scrollable-table-container {
+    .scrollable-table-container {
+      width: 100%;
+      /* Full width on mobile */
+      border-right: none;
+      border-bottom: 1px solid #ccc;
+      /* Bottom border for stacked layout */
+    }
+  }
+
+  .full-width-container {
+    max-width: 100% !important;
+    /* Ensure full width for forms */
+    padding: 12px;
+    /* Reduce padding for smaller screens */
+    height: calc(100svh - 124px);
+    /* Adjust height for the AppBar */
+    overflow: hidden;
+    /* Prevent overflow if content exceeds available height */
+  }
+
+  .App-header {
+    font-size: calc(8px + 2vmin);
+    /* Slightly smaller font for mobile */
+  }
+}
