@@ -1,8 +1,16 @@
 // AppShell.tsx
-import React, { } from 'react';
+import React, { JSX } from 'react';
 
-import { AppBar, Box, Container, CssBaseline, IconButton, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Container, CssBaseline, IconButton, Paper, Toolbar, Typography } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import LocationAutocomplete from './LocationAutocomplete';
+import GoogleMapsProvider from './GoogleMapsProvider';
+
+// Define LatLngLiteral type
+type LatLngLiteral = {
+  lat: number;
+  lng: number;
+};
 
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
@@ -11,28 +19,73 @@ const AppShell: React.FC = () => {
     console.log('handleOpenSettingsDialog');
   };
 
-  return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <CssBaseline />
-      <AppBar
-        position="static"
-      >
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Shweather
-          </Typography>
-          <IconButton onClick={handleOpenSettingsDialog} color="inherit">
-            <SettingsIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+  function handleSetMapLocation(mapLocation: LatLngLiteral): void {
+    console.log('handleSetMapLocation called with mapLocation:', mapLocation);
+  }
 
-      <Container maxWidth="lg" sx={{ py: 3, flexGrow: 1 }}>
-        <Box mb={2}>
-          flibbet
+  const renderLocationChoose = (): JSX.Element => {
+
+    return (
+      <Paper
+        id="map-page"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '24px',
+          minHeight: '100%',
+          height: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Header */}
+        <Box
+          id="map-page-header"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            marginBottom: 2,
+            width: '100%',
+          }}
+        >
+          {/* Location Autocomplete */}
+          <Box
+            id="map-page-locationAutocomplete-container"
+            sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
+          >
+            <LocationAutocomplete
+              onSetMapLocation={handleSetMapLocation}
+            />
+          </Box>
         </Box>
-      </Container>
-    </Box>
+      </Paper>
+    );
+
+  };
+
+  return (
+    <GoogleMapsProvider>
+      <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <CssBaseline />
+        <AppBar
+          position="static"
+        >
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Shweather
+            </Typography>
+            <IconButton onClick={handleOpenSettingsDialog} color="inherit">
+              <SettingsIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+
+        <Box id="mainAppContentArea" sx={{ flexGrow: 1, overflow: 'hidden' }}>
+          {renderLocationChoose()}
+        </Box>
+        
+      </Box>
+    </GoogleMapsProvider>
   );
 };
 
