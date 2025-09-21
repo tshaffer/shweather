@@ -4,8 +4,6 @@ import React, { } from 'react';
 import { AppBar, Box, Container, CssBaseline, IconButton, Toolbar, Typography } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import '../styles/App.css';
-
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
 
@@ -14,18 +12,15 @@ const AppShell: React.FC = () => {
   };
 
   return (
-    <Box id="mainLayoutContainer" sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <CssBaseline />
       <AppBar
-        id="shweatherAppBar"
         position="static"
       >
-        <Toolbar id="toolBar">
-
+        <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Shweather
           </Typography>
-
           <IconButton onClick={handleOpenSettingsDialog} color="inherit">
             <SettingsIcon />
           </IconButton>
