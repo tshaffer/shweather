@@ -1,7 +1,6 @@
 import {
   Box,
   Stack,
-  Typography,
   Collapse,
 } from "@mui/material";
 import { DailyForecastDay } from "../types";
@@ -13,12 +12,12 @@ import { selectDailyForecasts } from "../redux";
 
 // near the top of Forecast.tsx
 const COL = {
-  date: 160,        // your preferred date label width
+  date: 160,
   temps: 72,
   condition: 180,
   precip: 64,
   wind: 88,
-  toggle: 36,       // caret button
+  toggle: 36,
 };
 
 export default function Forecast() {

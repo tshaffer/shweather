@@ -26,9 +26,6 @@ const shweatherSlice = createSlice({
   name: 'shweather',
   initialState,
   reducers: {
-    setDailyForecasts(state, action: PayloadAction<DailyForecastDay[]>) {
-      state.dailyForecasts = action.payload;
-    },
     setRecentLocations: (state, action: PayloadAction<RecentLocation[]>) => {
       state.recentLocations = action.payload;
     },
@@ -38,17 +35,12 @@ const shweatherSlice = createSlice({
       .addCase(fetchForecast.fulfilled, (state, action: PayloadAction<any>) => {
         const fetchForecastResponse: FetchForecastResponse = action.payload;
         const { days: forecast } = fetchForecastResponse;
-
-        for (const dailyForecast of forecast) {
-            state.dailyForecasts.push(dailyForecast);
-          }
-        }
-      );
+        state.dailyForecasts = forecast;
+      });
   },
 });
 
 export const {
-  setDailyForecasts,
   setRecentLocations,
 } = shweatherSlice.actions;
 
