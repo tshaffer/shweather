@@ -19,7 +19,7 @@ type LatLngLiteral = {
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
 
-    const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [placeName, setPlaceName] = useState('');
 
@@ -35,18 +35,14 @@ const AppShell: React.FC = () => {
     console.log('handleOpenSettingsDialog');
   };
 
-  // function handleSetMapLocation(mapLocation: LatLngLiteral): void {
-  //   console.log('handleSetMapLocation called with mapLocation:', mapLocation);
-  // }
-
-  const renderLocationChoose = (): JSX.Element => {
+  const renderWeather = (): JSX.Element => {
 
     return (
       <Paper
         id="map-page"
         style={{
-          display: 'flex',
-          flexDirection: 'column',
+          // display: 'flex',
+          // flexDirection: 'column',
           padding: '24px',
           minHeight: '100%',
           height: '100%',
@@ -57,9 +53,9 @@ const AppShell: React.FC = () => {
         <Box
           id="map-page-header"
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
+            // display: 'flex',
+            // alignItems: 'center',
+            // gap: 1,
             marginBottom: 2,
             width: '100%',
           }}
@@ -104,7 +100,7 @@ const AppShell: React.FC = () => {
         </AppBar>
 
         <Box id="mainAppContentArea" sx={{ flexGrow: 1, overflow: 'hidden' }}>
-          {renderLocationChoose()}
+          {renderWeather()}
         </Box>
 
       </Box>
