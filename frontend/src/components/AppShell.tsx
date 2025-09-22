@@ -1,20 +1,14 @@
 // AppShell.tsx
-import React, { JSX, useState } from 'react';
+import React, { JSX, useEffect, useState } from 'react';
 
-import { AppBar, Box, Container, CssBaseline, IconButton, Paper, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, CssBaseline, IconButton, Paper, Toolbar, Typography } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
-import { Location } from '../types';
-import { AppDispatch, fetchForecast } from '../redux';
+import { Location, RecentLocation } from '../types';
+import { AppDispatch, fetchForecast, setRecentLocations } from '../redux';
 import { useDispatch } from 'react-redux';
 import Forecast from './Forecast';
-
-// Define LatLngLiteral type
-type LatLngLiteral = {
-  lat: number;
-  lng: number;
-};
 
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
@@ -23,12 +17,35 @@ const AppShell: React.FC = () => {
 
   const [placeName, setPlaceName] = useState('');
 
+  useEffect(() => {
+    console.log('getLocalStorage useEffect called');
+
+    const getRecentLocations = (): RecentLocation[] => {
+      const recentLocations: string | null = localStorage.getItem('recentLocations');
+      if (recentLocations) {
+        return JSON.parse(recentLocations);
+      } else {
+        return [];
+      }
+    };
+
+    const recentLocations = getRecentLocations();
+    console.log("recentLocations:", recentLocations);
+    dispatch(setRecentLocations(recentLocations));
+
+  }, []);
+
+
   const handleChangeGooglePlace = async (
     googlePlace: Location,
     placeName: string,
   ) => {
     dispatch(fetchForecast({ location: googlePlace.geometry.location }));
     // updateStop(index, { placeName, location: googlePlace });
+  };
+
+  const handleSelectRecentLocation = (location: RecentLocation) => {
+    dispatch(fetchForecast({ location: { lat: location.lat, lng: location.lng } }));
   };
 
   const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -41,8 +58,6 @@ const AppShell: React.FC = () => {
       <Paper
         id="map-page"
         style={{
-          // display: 'flex',
-          // flexDirection: 'column',
           padding: '24px',
           minHeight: '100%',
           height: '100%',
@@ -53,9 +68,6 @@ const AppShell: React.FC = () => {
         <Box
           id="map-page-header"
           sx={{
-            // display: 'flex',
-            // alignItems: 'center',
-            // gap: 1,
             marginBottom: 2,
             width: '100%',
           }}
@@ -73,8 +85,10 @@ const AppShell: React.FC = () => {
                   placeName,
                 )
               }
+              onSelectRecentLocation={(location: any) => handleSelectRecentLocation(location)}
             />
           </Box>
+          {/* 10 day forecast */}
           <Forecast />
         </Box>
       </Paper>
