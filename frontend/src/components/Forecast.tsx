@@ -13,9 +13,7 @@ import { selectDailyForecasts } from "../redux";
 
 // near the top of Forecast.tsx
 const COL = {
-  drag: 24,
-  day: 64,          // matches your Day {idx+1}
-  date: 120,        // your preferred date label width
+  date: 160,        // your preferred date label width
   temps: 72,
   condition: 180,
   precip: 64,
@@ -44,19 +42,13 @@ export default function Forecast() {
         <Stack direction="row" alignItems="center" gap={0.75} sx={{ flexWrap: "nowrap" }}>
           <Box key={dailyForecast.displayDate.day}>
 
-            <Typography
-              sx={{ width: COL.date, minWidth: COL.date, lineHeight: 1.2, flexShrink: 0, whiteSpace: "nowrap" }}
-              color="text.secondary"
-            >
-              flibbet
-              {/* {dayjs(itineraryStart).add(idx, "day").format("ddd MMM D")} */}
-            </Typography>
 
             <DailyForecast
               dailyForecastDay={dailyForecast}
               open={!!openRows[idx]}
               onToggle={() => toggleRow(idx)}
               columnWidths={{
+                date: COL.date,
                 temps: COL.temps,
                 condition: COL.condition,
                 precip: COL.precip,

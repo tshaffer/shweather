@@ -11,6 +11,7 @@ import { fmtTempF } from "../utilities";
 import { WbSunny as SunnyIcon } from "@mui/icons-material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import dayjs from "dayjs";
 
 // Derive a condition label + icon from the forecast.
 type ConditionView = {
@@ -42,10 +43,11 @@ export default function DailyForecast({
   dailyForecastDay: DailyForecastDay,
   open: boolean,
   onToggle: () => void,
-  columnWidths?: Partial<{ temps: number; condition: number; precip: number; wind: number; toggle: number }>
+  columnWidths?: Partial<{ date: number, temps: number; condition: number; precip: number; wind: number; toggle: number }>
 }) {
 
   const w = {
+    date: columnWidths?.date ?? 180,
     temps: columnWidths?.temps ?? 72,
     condition: columnWidths?.condition ?? 160,
     precip: columnWidths?.precip ?? 64,
@@ -63,8 +65,22 @@ export default function DailyForecast({
 
   const { label, iconUrl, FallbackIcon } = conditionFromForecast(dailyForecastDay);
 
+
+  function formatDisplayDate(d: { year: number; month: number; day: number }): string {
+    // Note: month - 1 because JS Date constructor expects 0–11
+    return dayjs(new Date(d.year, d.month - 1, d.day)).format("ddd MMM D");
+  }
+
   return (
     <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap: "nowrap", ml: 1, whiteSpace: "nowrap" }}>
+
+      <Typography
+        sx={{ width: w.date, minWidth: w.date, lineHeight: 1.2, flexShrink: 0, whiteSpace: "nowrap" }}
+        color="text.secondary"
+      >
+        {formatDisplayDate(dailyForecastDay.displayDate)}
+      </Typography>
+
       {/* Hi/Lo */}
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.temps, minWidth: w.temps, flexShrink: 0 }}>
         <Typography variant="body2" fontWeight={700}>
