@@ -37,15 +37,15 @@ export default function Forecast() {
       <Box
         className="rounded-2xl border border-gray-200"
         sx={{ p: 0.75 }}
+        key={dailyForecast.displayDate.day}
       >
-        <Stack direction="row" alignItems="center" gap={0.75} sx={{ flexWrap: "nowrap" }}>
+        <Stack direction="row" alignItems="center" gap={0.75} sx={{ flexWrap: "nowrap" }} key={dailyForecast.displayDate.day}>
           <Box key={dailyForecast.displayDate.day}>
-
-
             <DailyForecast
               dailyForecastDay={dailyForecast}
               open={!!openRows[idx]}
               onToggle={() => toggleRow(idx)}
+              key={dailyForecast.displayDate.day}
               columnWidths={{
                 date: COL.date,
                 temps: COL.temps,
@@ -55,12 +55,11 @@ export default function Forecast() {
                 toggle: COL.toggle,
               }}
             />
-
           </Box>
         </Stack>
 
         <Collapse in={!!openRows[idx]} timeout="auto" unmountOnExit>
-          <ForecastDetails dailyForecastDay={dailyForecast} />
+          <ForecastDetails dailyForecastDay={dailyForecast} key={dailyForecast.displayDate.day} />
         </Collapse>
 
 
