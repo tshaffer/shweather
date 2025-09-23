@@ -30,12 +30,11 @@ import { ShWeatherLocation } from '../types';
 interface LocationAutocompleteProps {
   placeName: string;
   onSetPlaceName: (friendlyPlaceName: string) => void;         // we'll set this to the exact dropdown label
-  onSetShweatherLocation: (shweatherLocation: ShWeatherLocation) => void;
-  onSelectRecentLocation: (shweatherLocation: ShWeatherLocation) => void;
+  onSetShWeatherLocation: (shWeatherLocation: ShWeatherLocation) => void;
 }
 
 const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
-  const { placeName, onSetPlaceName, onSetShweatherLocation, onSelectRecentLocation } = props;
+  const { placeName, onSetPlaceName, onSetShWeatherLocation } = props;
 
   const dispatch = useDispatch();
 
@@ -159,7 +158,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
       const shweatherLocation: ShWeatherLocation = buildShWeatherLocation(placeName, place);
       addRecentLocation(shweatherLocation);
       console.log('Selected place:', placeName);
-      onSetShweatherLocation(shweatherLocation);
+      onSetShWeatherLocation(shweatherLocation);
     } else {
       console.error('No place geometry found in handlePlaceChanged');
     }
@@ -193,9 +192,9 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     const key = event.target.value;
     setSelectedLocationKey(key);
 
-    const selected: ShWeatherLocation | undefined = recentLocations.find(loc => loc.friendlyPlaceName === key);
-    if (selected) {
-      onSelectRecentLocation(selected);
+    const selectedShWeatherLocation: ShWeatherLocation | undefined = recentLocations.find(loc => loc.friendlyPlaceName === key);
+    if (selectedShWeatherLocation) {
+      onSetShWeatherLocation(selectedShWeatherLocation);
     }
   };
 

@@ -49,15 +49,9 @@ const AppShell: React.FC = () => {
   }, [dispatch]);
 
 
-  const handleSetShweatherLocation = async (
-    googlePlace: ShWeatherLocation,
-  ) => {
-    dispatch(fetchForecast({ location: googlePlace.geometry.location }));
-    // updateStop(index, { placeName, location: googlePlace });
-  };
-
-  const handleSelectRecentLocation = (shweatherLocation: ShWeatherLocation) => {
-    dispatch(fetchForecast({ location: { lat: shweatherLocation.geometry.location.lat, lng: shweatherLocation.geometry.location.lng } }));
+  const handleSetShWeatherLocation = async (shWeatherLocation: ShWeatherLocation) => {
+    localStorage.setItem('lastLocation', JSON.stringify(shWeatherLocation));
+    dispatch(fetchForecast({ location: shWeatherLocation.geometry.location }));
   };
 
   const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -91,12 +85,7 @@ const AppShell: React.FC = () => {
             <LocationAutocomplete
               placeName={placeName || ""}
               onSetPlaceName={(name: string) => setPlaceName(name)}
-              onSetShweatherLocation={(shWeatherLocation: ShWeatherLocation) =>
-                handleSetShweatherLocation(
-                  shWeatherLocation,
-                )
-              }
-              onSelectRecentLocation={(shWeatherLocation: ShWeatherLocation) => handleSelectRecentLocation(shWeatherLocation)}
+              onSetShWeatherLocation={(shWeatherLocation: ShWeatherLocation) => handleSetShWeatherLocation(shWeatherLocation)}
             />
           </Box>
           {/* 10 day forecast */}
