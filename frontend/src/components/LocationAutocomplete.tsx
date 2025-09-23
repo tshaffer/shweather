@@ -155,9 +155,13 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
       console.error('No place geometry found in handlePlaceChanged');
     }
 
+    // ⬇️ Blank the Recent Location dropdown
+    setSelectedLocationKey('');
+
     // Reset session for next search
     sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
   };
+
   const addRecentLocation = (shweatherLocation: ShWeatherLocation) => {
     // Check for duplicates
     const exists = recentLocations.some(loc => loc.friendlyPlaceName === shweatherLocation.friendlyPlaceName);
@@ -185,8 +189,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
 
     const selected = recentLocations.find(loc => loc.friendlyPlaceName === key);
     if (selected) {
-      // ✅ reflect selection in the text field, too
-      onSetPlaceName(selected.friendlyPlaceName);
+      onSetPlaceName('');
       onSetShWeatherLocation(selected);
     }
   };
