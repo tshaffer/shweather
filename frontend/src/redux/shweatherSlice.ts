@@ -22,6 +22,15 @@ export const fetchForecast = createAsyncThunk(
   }
 );
 
+function isBeforeToday(displayDate: { year: number; month: number; day: number }): boolean {
+  // Build a local Date for the forecast day
+  const forecastDate = new Date(displayDate.year, displayDate.month - 1, displayDate.day);
+  // Today's local midnight
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  return forecastDate < todayStart;
+}
+
 const shweatherSlice = createSlice({
   name: 'shweather',
   initialState,
@@ -35,7 +44,7 @@ const shweatherSlice = createSlice({
       .addCase(fetchForecast.fulfilled, (state, action: PayloadAction<any>) => {
         const fetchForecastResponse: FetchForecastResponse = action.payload;
         const { days: forecast } = fetchForecastResponse;
-        state.dailyForecasts = forecast;
+        state.dailyForecasts = forecast.filter(d => !isBeforeToday(d.displayDate));
       });
   },
 });
