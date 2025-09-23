@@ -4,11 +4,13 @@ import { DailyForecastDay, FetchForecastResponse, RecentLocation } from '../type
 
 interface ShweatherState {
   dailyForecasts: DailyForecastDay[];
+  lastLocation: RecentLocation | null;
   recentLocations: RecentLocation[];
 }
 
 const initialState: ShweatherState = {
   dailyForecasts: [],
+  lastLocation: null,
   recentLocations: [],
 };
 
@@ -38,6 +40,9 @@ const shweatherSlice = createSlice({
     setRecentLocations: (state, action: PayloadAction<RecentLocation[]>) => {
       state.recentLocations = action.payload;
     },
+    setLastLocation: (state, action: PayloadAction<RecentLocation | null>) => {
+      state.lastLocation = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -51,6 +56,7 @@ const shweatherSlice = createSlice({
 
 export const {
   setRecentLocations,
+  setLastLocation,
 } = shweatherSlice.actions;
 
 export default shweatherSlice.reducer;

@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
 import { Location, RecentLocation } from '../types';
-import { AppDispatch, fetchForecast, setRecentLocations } from '../redux';
+import { AppDispatch, fetchForecast, setLastLocation, setRecentLocations } from '../redux';
 import { useDispatch } from 'react-redux';
 import Forecast from './Forecast';
 
@@ -18,7 +18,17 @@ const AppShell: React.FC = () => {
   const [placeName, setPlaceName] = useState('');
 
   useEffect(() => {
+
     console.log('getLocalStorage useEffect called');
+
+    const getLastLocation = (): RecentLocation | null => {
+      const lastLocation: string | null = localStorage.getItem('lastLocation');
+      if (lastLocation) {
+        return JSON.parse(lastLocation);
+      } else {
+        return null;
+      }
+    };
 
     const getRecentLocations = (): RecentLocation[] => {
       const recentLocations: string | null = localStorage.getItem('recentLocations');
@@ -28,6 +38,10 @@ const AppShell: React.FC = () => {
         return [];
       }
     };
+
+    const lastLocation = getLastLocation();
+    console.log("lastLocation:", lastLocation);
+    dispatch(setLastLocation(lastLocation));
 
     const recentLocations = getRecentLocations();
     console.log("recentLocations:", recentLocations);
