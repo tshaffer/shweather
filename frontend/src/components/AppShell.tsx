@@ -18,6 +18,7 @@ const AppShell: React.FC = () => {
   const lastLocation: ShWeatherLocation | null = useSelector(selectLastLocation);
 
   const [placeName, setPlaceName] = useState('');
+  const [activeLocationLabel, setActiveLocationLabel] = useState(''); // NEW
 
   useEffect(() => {
     // guard: avoid double-run in React 18 StrictMode (dev)
@@ -37,16 +38,12 @@ const AppShell: React.FC = () => {
     const lastLocation = getLastLocation();
     console.log('lastLocation:', lastLocation);
     dispatch(setLastLocation(lastLocation));
+    dispatch(setRecentLocations(getRecentLocations()));
 
-    const recentLocations = getRecentLocations();
-    console.log('recentLocations:', recentLocations);
-    dispatch(setRecentLocations(recentLocations));
-
-    // >>> Fetch on startup if we have a saved lastLocation
     if (lastLocation) {
-      // optional: reflect saved name in the input
-      // setPlaceName(lastLocation.name ?? '');
-      dispatch(fetchForecast({ location: { lat: lastLocation.geometry.location.lat, lng: lastLocation.geometry.location.lng } }));
+      // ✅ ensure the header shows the saved location on startup
+      setActiveLocationLabel(lastLocation.friendlyPlaceName);
+      dispatch(fetchForecast({ location: lastLocation.geometry.location }));
     }
   }, [dispatch]);
 
@@ -55,6 +52,7 @@ const AppShell: React.FC = () => {
     localStorage.setItem('lastLocation', JSON.stringify(shWeatherLocation));
     dispatch(setLastLocation(shWeatherLocation));
     dispatch(fetchForecast({ location: shWeatherLocation.geometry.location }));
+    setActiveLocationLabel(shWeatherLocation.friendlyPlaceName); // ✅ keep header in sync
   };
 
   const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -86,14 +84,15 @@ const AppShell: React.FC = () => {
             sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0, marginBottom: 2 }}
           >
             <LocationAutocomplete
-              placeName={placeName || ""}
+              placeName={placeName}
               onSetPlaceName={(name: string) => setPlaceName(name)}
               onSetShWeatherLocation={(shWeatherLocation: ShWeatherLocation) => handleSetShWeatherLocation(shWeatherLocation)}
             />
           </Box>
           <Typography variant="h6" component="h1" gutterBottom>
-            10 Day Weather - {lastLocation?.friendlyPlaceName || 'Select a location'}
+            10 Day Weather - {activeLocationLabel || 'Select a location'}
           </Typography>
+
           {/* 10 day forecast */}
           <Forecast />
         </Box>
