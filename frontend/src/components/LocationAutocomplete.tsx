@@ -76,6 +76,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
+
+    console.log('handleInputChange: ', val);
     onSetPlaceName(val); // keep your controlled input in sync
 
     if (!autocompleteServiceRef.current) return;
@@ -127,6 +129,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
   };
 
   const handlePlaceChanged = () => {
+
+    console.log('handlePlaceChanged:');
     if (!autocompleteRef.current) return;
 
     const place = autocompleteRef.current.getPlace() as google.maps.places.PlaceResult | undefined;
@@ -142,6 +146,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     // If we found it, set your controlled field to the exact dropdown label.
     if (matchedPrediction?.description) {
       placeName = matchedPrediction.description;
+      console.log('Matched prediction description:', placeName);
     } else {
       // Fallback: use PlaceResult fields if prediction cache missed
       const fallback: string =
@@ -149,11 +154,13 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
         [place.name, place.vicinity].filter(Boolean).join(', ') ??
         placeName;
       placeName = fallback;
+      console.log('Fallback placeName:', placeName);
     }
 
     if (place.geometry?.location) {
       addRecentLocation(place);
       const googlePlace: Location = buildLocation(place);
+      console.log('Selected place:', placeName);
       onSetGoogleLocation(googlePlace, placeName);
     } else {
       console.error('No place geometry found in handlePlaceChanged');
