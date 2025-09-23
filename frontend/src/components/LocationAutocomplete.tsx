@@ -125,48 +125,39 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     // }
   };
 
-  const handlePlaceChanged = () => {
+  // In LocationAutocomplete.tsx
 
-    console.log('handlePlaceChanged:');
+  const handlePlaceChanged = () => {
     if (!autocompleteRef.current) return;
 
     const place = autocompleteRef.current.getPlace() as google.maps.places.PlaceResult | undefined;
     if (!place) return;
 
-    // Prefer the *exact* label the user saw in the dropdown
     const matchedPrediction = place.place_id
       ? predictionsByIdRef.current.get(place.place_id)
       : undefined;
 
-    let placeName: string = '';
+    // Use a different name to avoid shadowing props.placeName
+    const selectedLabel =
+      matchedPrediction?.description ??
+      place.formatted_address ??
+      [place.name, place.vicinity].filter(Boolean).join(', ') ??
+      '';
 
-    // If we found it, set your controlled field to the exact dropdown label.
-    if (matchedPrediction?.description) {
-      placeName = matchedPrediction.description;
-      console.log('Matched prediction description:', placeName);
-    } else {
-      // Fallback: use PlaceResult fields if prediction cache missed
-      const fallback: string =
-        place.formatted_address ??
-        [place.name, place.vicinity].filter(Boolean).join(', ') ??
-        placeName;
-      placeName = fallback;
-      console.log('Fallback placeName:', placeName);
-    }
+    // ✅ keep the input in sync with the selection
+    onSetPlaceName(selectedLabel);
 
     if (place.geometry?.location) {
-      const shweatherLocation: ShWeatherLocation = buildShWeatherLocation(placeName, place);
+      const shweatherLocation = buildShWeatherLocation(selectedLabel, place);
       addRecentLocation(shweatherLocation);
-      console.log('Selected place:', placeName);
       onSetShWeatherLocation(shweatherLocation);
     } else {
       console.error('No place geometry found in handlePlaceChanged');
     }
 
-    // Start a new session after a successful selection
+    // Reset session for next search
     sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
   };
-
   const addRecentLocation = (shweatherLocation: ShWeatherLocation) => {
     // Check for duplicates
     const exists = recentLocations.some(loc => loc.friendlyPlaceName === shweatherLocation.friendlyPlaceName);
@@ -192,9 +183,11 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     const key = event.target.value;
     setSelectedLocationKey(key);
 
-    const selectedShWeatherLocation: ShWeatherLocation | undefined = recentLocations.find(loc => loc.friendlyPlaceName === key);
-    if (selectedShWeatherLocation) {
-      onSetShWeatherLocation(selectedShWeatherLocation);
+    const selected = recentLocations.find(loc => loc.friendlyPlaceName === key);
+    if (selected) {
+      // ✅ reflect selection in the text field, too
+      onSetPlaceName(selected.friendlyPlaceName);
+      onSetShWeatherLocation(selected);
     }
   };
 
