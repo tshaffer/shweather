@@ -6,14 +6,16 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
 import { ShWeatherLocation } from '../types/types';
-import { AppDispatch, fetchForecast, setLastLocation, setRecentLocations } from '../redux';
-import { useDispatch } from 'react-redux';
+import { AppDispatch, fetchForecast, selectLastLocation, setLastLocation, setRecentLocations } from '../redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Forecast from './Forecast';
 
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const lastLocation: ShWeatherLocation | null = useSelector(selectLastLocation);
 
   const [placeName, setPlaceName] = useState('');
 
@@ -51,6 +53,7 @@ const AppShell: React.FC = () => {
 
   const handleSetShWeatherLocation = async (shWeatherLocation: ShWeatherLocation) => {
     localStorage.setItem('lastLocation', JSON.stringify(shWeatherLocation));
+    dispatch(setLastLocation(shWeatherLocation));
     dispatch(fetchForecast({ location: shWeatherLocation.geometry.location }));
   };
 
@@ -80,7 +83,7 @@ const AppShell: React.FC = () => {
         >
           <Box
             id="map-page-locationAutocomplete-container"
-            sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
+            sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0, marginBottom: 2 }}
           >
             <LocationAutocomplete
               placeName={placeName || ""}
@@ -88,6 +91,9 @@ const AppShell: React.FC = () => {
               onSetShWeatherLocation={(shWeatherLocation: ShWeatherLocation) => handleSetShWeatherLocation(shWeatherLocation)}
             />
           </Box>
+          <Typography variant="h6" component="h1" gutterBottom>
+            10 Day Weather - {lastLocation?.friendlyPlaceName || 'Select a location'}
+          </Typography>
           {/* 10 day forecast */}
           <Forecast />
         </Box>
