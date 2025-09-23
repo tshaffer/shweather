@@ -5,7 +5,7 @@ import { AppBar, Box, CssBaseline, IconButton, Paper, Toolbar, Typography } from
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
-import { Location, RecentLocation } from '../types';
+import { ShWeatherLocation } from '../types/types';
 import { AppDispatch, fetchForecast, setLastLocation, setRecentLocations } from '../redux';
 import { useDispatch } from 'react-redux';
 import Forecast from './Forecast';
@@ -22,14 +22,14 @@ const AppShell: React.FC = () => {
     if ((window as any).__shweather_init_done__) return;
     (window as any).__shweather_init_done__ = true;
 
-    const getLastLocation = (): RecentLocation | null => {
+    const getLastLocation = (): ShWeatherLocation | null => {
       const lastLocation = localStorage.getItem('lastLocation');
-      return lastLocation ? JSON.parse(lastLocation) as RecentLocation : null;
+      return lastLocation ? JSON.parse(lastLocation) as ShWeatherLocation : null;
     };
 
-    const getRecentLocations = (): RecentLocation[] => {
+    const getRecentLocations = (): ShWeatherLocation[] => {
       const recent = localStorage.getItem('recentLocations');
-      return recent ? (JSON.parse(recent) as RecentLocation[]) : [];
+      return recent ? (JSON.parse(recent) as ShWeatherLocation[]) : [];
     };
 
     const lastLocation = getLastLocation();
@@ -44,21 +44,20 @@ const AppShell: React.FC = () => {
     if (lastLocation) {
       // optional: reflect saved name in the input
       // setPlaceName(lastLocation.name ?? '');
-      dispatch(fetchForecast({ location: { lat: lastLocation.lat, lng: lastLocation.lng } }));
+      dispatch(fetchForecast({ location: { lat: lastLocation.geometry.location.lat, lng: lastLocation.geometry.location.lng } }));
     }
   }, [dispatch]);
 
 
-  const handleSetGoogleLocation = async (
-    googlePlace: Location,
-    placeName: string,
+  const handleSetShweatherLocation = async (
+    googlePlace: ShWeatherLocation,
   ) => {
     dispatch(fetchForecast({ location: googlePlace.geometry.location }));
     // updateStop(index, { placeName, location: googlePlace });
   };
 
-  const handleSelectRecentLocation = (location: RecentLocation) => {
-    dispatch(fetchForecast({ location: { lat: location.lat, lng: location.lng } }));
+  const handleSelectRecentLocation = (shweatherLocation: ShWeatherLocation) => {
+    dispatch(fetchForecast({ location: { lat: shweatherLocation.geometry.location.lat, lng: shweatherLocation.geometry.location.lng } }));
   };
 
   const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -92,13 +91,12 @@ const AppShell: React.FC = () => {
             <LocationAutocomplete
               placeName={placeName || ""}
               onSetPlaceName={(name: string) => setPlaceName(name)}
-              onSetGoogleLocation={(googlePlace: Location, placeName: string) =>
-                handleSetGoogleLocation(
-                  googlePlace,
-                  placeName,
+              onSetShweatherLocation={(shWeatherLocation: ShWeatherLocation) =>
+                handleSetShweatherLocation(
+                  shWeatherLocation,
                 )
               }
-              onSelectRecentLocation={(location: any) => handleSelectRecentLocation(location)}
+              onSelectRecentLocation={(shWeatherLocation: ShWeatherLocation) => handleSelectRecentLocation(shWeatherLocation)}
             />
           </Box>
           {/* 10 day forecast */}

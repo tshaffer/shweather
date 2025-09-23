@@ -2,12 +2,6 @@ export interface GoogleGeometry {
   location: google.maps.LatLngLiteral;
 }
 
-export interface Location {
-  googlePlaceId: string;
-  geometry: GoogleGeometry;
-  name: string;
-}
-
 export interface ForecastDayPart {
   interval?: { startTime: string; endTime: string }; // *
   weatherCondition?: WeatherCondition; // *

@@ -23,21 +23,19 @@ import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Autocomplete } from '@react-google-maps/api';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { RecentLocation } from '../types';
 import { useSelector } from 'react-redux';
 import { selectRecentLocations, setRecentLocations } from '../redux';
-import { Location } from '../types';
+import { ShWeatherLocation } from '../types';
 
 interface LocationAutocompleteProps {
-  // onSetMapLocation: (mapLocation: google.maps.LatLngLiteral) => void;
   placeName: string;
-  onSetPlaceName: (placeName: string) => void;         // we'll set this to the exact dropdown label
-  onSetGoogleLocation: (googleLocation: Location, placeName: string) => void;
-  onSelectRecentLocation: (mapLocation: google.maps.LatLngLiteral, placeName: string) => void;
+  onSetPlaceName: (friendlyPlaceName: string) => void;         // we'll set this to the exact dropdown label
+  onSetShweatherLocation: (shweatherLocation: ShWeatherLocation) => void;
+  onSelectRecentLocation: (shweatherLocation: ShWeatherLocation) => void;
 }
 
 const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
-  const { placeName, onSetPlaceName, onSetGoogleLocation, onSelectRecentLocation } = props;
+  const { placeName, onSetPlaceName, onSetShweatherLocation, onSelectRecentLocation } = props;
 
   const dispatch = useDispatch();
 
@@ -60,10 +58,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     }
   }, []);
 
-  function buildLocation(googlePlaceResult: google.maps.places.PlaceResult): Location {
-    const location: Location = {
+  function buildShWeatherLocation(friendlyPlaceName: string, googlePlaceResult: google.maps.places.PlaceResult): ShWeatherLocation {
+    const shWeatherLocation: ShWeatherLocation = {
       googlePlaceId: googlePlaceResult.place_id!,
-      name: googlePlaceResult.name!,
+      friendlyPlaceName: friendlyPlaceName,
       geometry: {
         location: {
           lat: googlePlaceResult.geometry!.location!.lat(),
@@ -71,19 +69,19 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
         },
       },
     };
-    return location;
+    return shWeatherLocation;
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
+    const placeNameUserInput = e.target.value;
 
-    console.log('handleInputChange: ', val);
-    onSetPlaceName(val); // keep your controlled input in sync
+    console.log('handleInputChange: ', placeNameUserInput);
+    onSetPlaceName(placeNameUserInput); // keep your controlled input in sync
 
     if (!autocompleteServiceRef.current) return;
 
     const request: google.maps.places.AutocompletionRequest = {
-      input: val,
+      input: placeNameUserInput,
       sessionToken: sessionTokenRef.current ?? undefined,
       // You can add: componentRestrictions: { country: ['us'] }, types: ['geocode']
     };
@@ -101,7 +99,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [selectedLocationKey, setSelectedLocationKey] = useState<string>('');
 
-  const recentLocations: RecentLocation[] = useSelector(selectRecentLocations);
+  const recentLocations: ShWeatherLocation[] = useSelector(selectRecentLocations);
 
   const [manageDialogOpen, setManageDialogOpen] = useState(false);
 
@@ -158,10 +156,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     }
 
     if (place.geometry?.location) {
-      addRecentLocation(place);
-      const googlePlace: Location = buildLocation(place);
+      const shweatherLocation: ShWeatherLocation = buildShWeatherLocation(placeName, place);
+      addRecentLocation(shweatherLocation);
       console.log('Selected place:', placeName);
-      onSetGoogleLocation(googlePlace, placeName);
+      onSetShweatherLocation(shweatherLocation);
     } else {
       console.error('No place geometry found in handlePlaceChanged');
     }
@@ -170,34 +168,19 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
   };
 
-  const addRecentLocation = (place: google.maps.places.PlaceResult) => {
-
-    if (place.formatted_address) {
-
-      const newCoordinates = {
-        lat: place.geometry!.location!.lat(),
-        lng: place.geometry!.location!.lng(),
-      };
-
-      const newLocation: RecentLocation = {
-        label: place.formatted_address,
-        lat: newCoordinates.lat,
-        lng: newCoordinates.lng,
-      };
-
-      // Check for duplicates
-      const exists = recentLocations.some(loc => loc.label === newLocation.label);
-      let updatedLocations = [...recentLocations];
-      if (!exists) {
-        updatedLocations.push(newLocation);
-        dispatch(setRecentLocations(updatedLocations));
-        localStorage.setItem('recentLocations', JSON.stringify(updatedLocations));
-      }
+  const addRecentLocation = (shweatherLocation: ShWeatherLocation) => {
+    // Check for duplicates
+    const exists = recentLocations.some(loc => loc.friendlyPlaceName === shweatherLocation.friendlyPlaceName);
+    let updatedLocations = [...recentLocations];
+    if (!exists) {
+      updatedLocations.push(shweatherLocation);
+      dispatch(setRecentLocations(updatedLocations));
+      localStorage.setItem('recentLocations', JSON.stringify(updatedLocations));
     }
   }
 
   const handleDeleteLocation = (labelToDelete: string) => {
-    const updated = recentLocations.filter(loc => loc.label !== labelToDelete);
+    const updated = recentLocations.filter(loc => loc.friendlyPlaceName !== labelToDelete);
     dispatch(setRecentLocations(updated));
     localStorage.setItem('recentLocations', JSON.stringify(updated));
 
@@ -206,13 +189,13 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     }
   };
 
-  const handleLocationSelect = (event: SelectChangeEvent<string>) => {
+  const handleSelectRecentLocation = (event: SelectChangeEvent<string>) => {
     const key = event.target.value;
     setSelectedLocationKey(key);
 
-    const selected: RecentLocation | undefined = recentLocations.find(loc => loc.label === key);
+    const selected: ShWeatherLocation | undefined = recentLocations.find(loc => loc.friendlyPlaceName === key);
     if (selected) {
-      onSelectRecentLocation({ lat: selected.lat, lng: selected.lng }, selected.label);
+      onSelectRecentLocation(selected);
     }
   };
 
@@ -245,7 +228,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
 
       <Select
         value={selectedLocationKey}
-        onChange={handleLocationSelect}
+        onChange={handleSelectRecentLocation}
         displayEmpty
         size="small"
         sx={{ minWidth: 180, flexGrow: 1 }}
@@ -254,8 +237,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
           Select a location
         </MenuItem>
         {recentLocations.map((loc) => (
-          <MenuItem key={loc.label} value={loc.label}>
-            {loc.label}
+          <MenuItem key={loc.friendlyPlaceName} value={loc.friendlyPlaceName}>
+            {loc.friendlyPlaceName}
           </MenuItem>
         ))}
       </Select>
@@ -304,21 +287,21 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
           <List dense>
             {recentLocations
               .slice()
-              .sort((a, b) => a.label.localeCompare(b.label))
+              .sort((a, b) => a.friendlyPlaceName.localeCompare(b.friendlyPlaceName))
               .map((loc) => (
                 <ListItem
-                  key={loc.label}
+                  key={loc.friendlyPlaceName}
                   secondaryAction={
                     <IconButton
                       edge="end"
                       aria-label="delete"
-                      onClick={() => handleDeleteLocation(loc.label)}
+                      onClick={() => handleDeleteLocation(loc.friendlyPlaceName)}
                     >
                       <DeleteIcon />
                     </IconButton>
                   }
                 >
-                  <ListItemText primary={loc.label} />
+                  <ListItemText primary={loc.friendlyPlaceName} />
                 </ListItem>
               ))}
           </List>

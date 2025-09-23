@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { DailyForecastDay, FetchForecastResponse, RecentLocation } from '../types';
+import { DailyForecastDay, FetchForecastResponse, ShWeatherLocation } from '../types';
 
 interface ShweatherState {
   dailyForecasts: DailyForecastDay[];
-  lastLocation: RecentLocation | null;
-  recentLocations: RecentLocation[];
+  lastLocation: ShWeatherLocation | null;
+  recentLocations: ShWeatherLocation[];
 }
 
 const initialState: ShweatherState = {
@@ -37,10 +37,10 @@ const shweatherSlice = createSlice({
   name: 'shweather',
   initialState,
   reducers: {
-    setRecentLocations: (state, action: PayloadAction<RecentLocation[]>) => {
+    setRecentLocations: (state, action: PayloadAction<ShWeatherLocation[]>) => {
       state.recentLocations = action.payload;
     },
-    setLastLocation: (state, action: PayloadAction<RecentLocation | null>) => {
+    setLastLocation: (state, action: PayloadAction<ShWeatherLocation | null>) => {
       state.lastLocation = action.payload;
     },
   },

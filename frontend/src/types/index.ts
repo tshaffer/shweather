@@ -1,4 +1,4 @@
 export * from './base';
-export * from './entities';
+export * from './types';
 export * from './googleInterfaces';
 
