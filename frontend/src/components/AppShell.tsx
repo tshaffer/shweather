@@ -18,39 +18,38 @@ const AppShell: React.FC = () => {
   const [placeName, setPlaceName] = useState('');
 
   useEffect(() => {
-
-    console.log('getLocalStorage useEffect called');
+    // guard: avoid double-run in React 18 StrictMode (dev)
+    if ((window as any).__shweather_init_done__) return;
+    (window as any).__shweather_init_done__ = true;
 
     const getLastLocation = (): RecentLocation | null => {
-      const lastLocation: string | null = localStorage.getItem('lastLocation');
-      if (lastLocation) {
-        return JSON.parse(lastLocation);
-      } else {
-        return null;
-      }
+      const lastLocation = localStorage.getItem('lastLocation');
+      return lastLocation ? JSON.parse(lastLocation) as RecentLocation : null;
     };
 
     const getRecentLocations = (): RecentLocation[] => {
-      const recentLocations: string | null = localStorage.getItem('recentLocations');
-      if (recentLocations) {
-        return JSON.parse(recentLocations);
-      } else {
-        return [];
-      }
+      const recent = localStorage.getItem('recentLocations');
+      return recent ? (JSON.parse(recent) as RecentLocation[]) : [];
     };
 
     const lastLocation = getLastLocation();
-    console.log("lastLocation:", lastLocation);
+    console.log('lastLocation:', lastLocation);
     dispatch(setLastLocation(lastLocation));
 
     const recentLocations = getRecentLocations();
-    console.log("recentLocations:", recentLocations);
+    console.log('recentLocations:', recentLocations);
     dispatch(setRecentLocations(recentLocations));
 
-  }, []);
+    // >>> Fetch on startup if we have a saved lastLocation
+    if (lastLocation) {
+      // optional: reflect saved name in the input
+      // setPlaceName(lastLocation.name ?? '');
+      dispatch(fetchForecast({ location: { lat: lastLocation.lat, lng: lastLocation.lng } }));
+    }
+  }, [dispatch]);
 
 
-  const handleChangeGooglePlace = async (
+  const handleSetGoogleLocation = async (
     googlePlace: Location,
     placeName: string,
   ) => {
@@ -94,7 +93,7 @@ const AppShell: React.FC = () => {
               placeName={placeName || ""}
               onSetPlaceName={(name: string) => setPlaceName(name)}
               onSetGoogleLocation={(googlePlace: Location, placeName: string) =>
-                handleChangeGooglePlace(
+                handleSetGoogleLocation(
                   googlePlace,
                   placeName,
                 )
