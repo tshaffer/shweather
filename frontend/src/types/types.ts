@@ -1,9 +1,15 @@
-import { DailyForecastDay, GoogleGeometry } from "./googleInterfaces";
+import { DailyForecastDay, ForecastHour, GoogleGeometry } from "./googleInterfaces";
 
 export type ForecastView = 'daily' | 'hourly';
 
-export interface FetchForecastResponse {
+export interface ForecastDaysResponse {
   days: DailyForecastDay[];
+}
+
+export interface ForecastHoursResponse {
+  forecastHours: ForecastHour[];
+  timeZone?: { id: string };
+  nextPageToken?: string;
 }
 
 export interface ShWeatherLocation {

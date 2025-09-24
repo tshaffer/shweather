@@ -1,28 +1,40 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { DailyForecastDay, FetchForecastResponse, ShWeatherLocation } from '../types';
+import { DailyForecastDay, ForecastDaysResponse, ForecastHour, ForecastHoursResponse, ShWeatherLocation } from '../types';
 
-interface ShweatherState {
+interface ShWeatherState {
   forecastView?: 'daily' | 'hourly'; // NEW
   dailyForecasts: DailyForecastDay[];
   lastLocation: ShWeatherLocation | null;
   recentLocations: ShWeatherLocation[];
+  hourlyForecasts: ForecastHour[];
 }
 
-const initialState: ShweatherState = {
+const initialState: ShWeatherState = {
   forecastView: 'daily', // NEW
   dailyForecasts: [],
+  hourlyForecasts: [],
   lastLocation: null,
   recentLocations: [],
 };
 
 export const fetchDailyForecast = createAsyncThunk(
-  'forecast/fetchForecast',
+  'forecast/fetchDailyForecast',
   async ({ location: locationCoordinates }: { location: google.maps.LatLngLiteral }) => {
     const response = await axios.get('/api/v1/dailyForecast', {
       params: { location: JSON.stringify(locationCoordinates) },
     });
     return { days: response.data.days };
+  }
+);
+
+export const fetchHourlyForecast = createAsyncThunk(
+  'forecast/fetchHourlyForecast',
+  async ({ location: locationCoordinates }: { location: google.maps.LatLngLiteral }) => {
+    const response = await axios.get('/api/v1/hourlyForecast', {
+      params: { location: JSON.stringify(locationCoordinates) },
+    });
+    return { hours: response.data.hours };
   }
 );
 
@@ -52,9 +64,14 @@ const shweatherSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchDailyForecast.fulfilled, (state, action: PayloadAction<any>) => {
-        const fetchForecastResponse: FetchForecastResponse = action.payload;
+        const fetchForecastResponse: ForecastDaysResponse = action.payload;
         const { days: forecast } = fetchForecastResponse;
         state.dailyForecasts = forecast.filter(d => !isBeforeToday(d.displayDate));
+      })
+      .addCase(fetchHourlyForecast.fulfilled, (state, action: PayloadAction<any>) => {
+        const fetchForecastResponse: ForecastHoursResponse = action.payload;
+        const { forecastHours }  = fetchForecastResponse;
+        state.hourlyForecasts = forecastHours;
       });
   },
 });

@@ -97,3 +97,34 @@ export enum WeatherConditionType {
   SCATTERED_THUNDERSTORMS = "Thunderstorms that has rain in various intensities for brief periods of time.",
   HEAVY_THUNDERSTORM = "Heavy thunderstorm.",
 }
+
+export interface ForecastHour {
+  interval: { startTime: string; endTime: string };
+  displayDateTime: { year: number; month: number; day: number };
+  weatherCondition: { description: string; type: string; iconBaseUri?: string };
+  temperature: Temperature;
+  feelsLikeTemperature: Temperature;
+  dewPoint?: Temperature;
+  heatIndex?: Temperature;
+  windChill?: Temperature;
+  wetBulbTemperature?: Temperature;
+  // https://developers.google.com/maps/documentation/weather/reference/rest/v1/Precipitation
+  precipitation?: {
+    probability?: number;
+    qpf?: any;
+    snowQpf?: any;
+  };
+  airPressure: any;
+  wind?: { speed: { value: number; unit: string }; direction?: { degrees: number; localizedDescription?: string } };
+  visibility?: any;
+  iceThickness?: { thickness: number; unit: string };
+  isDaytime: boolean;
+  relativeHumidity: number;
+  uvIndex: number;
+  thunderstormProbability: number;
+  cloudCover: number;
+}
+export interface Temperature {
+  degrees: number;
+  unit: string;
+}
