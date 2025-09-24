@@ -3,12 +3,14 @@ import axios from 'axios';
 import { DailyForecastDay, FetchForecastResponse, ShWeatherLocation } from '../types';
 
 interface ShweatherState {
+  forecastView?: 'daily' | 'hourly'; // NEW
   dailyForecasts: DailyForecastDay[];
   lastLocation: ShWeatherLocation | null;
   recentLocations: ShWeatherLocation[];
 }
 
 const initialState: ShweatherState = {
+  forecastView: 'daily', // NEW
   dailyForecasts: [],
   lastLocation: null,
   recentLocations: [],
@@ -37,6 +39,9 @@ const shweatherSlice = createSlice({
   name: 'shweather',
   initialState,
   reducers: {
+    setForecastView: (state, action: PayloadAction<'daily' | 'hourly'>) => {
+      state.forecastView = action.payload;
+    },
     setRecentLocations: (state, action: PayloadAction<ShWeatherLocation[]>) => {
       state.recentLocations = action.payload;
     },
@@ -55,6 +60,7 @@ const shweatherSlice = createSlice({
 });
 
 export const {
+  setForecastView,
   setRecentLocations,
   setLastLocation,
 } = shweatherSlice.actions;

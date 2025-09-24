@@ -1,29 +1,36 @@
 // AppShell.tsx
 import React, { JSX, useEffect, useState } from 'react';
 
-import { AppBar, Box, CssBaseline, IconButton, Paper, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, CssBaseline, IconButton, Paper, Tab, Tabs, Toolbar, Typography } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
 import { ShWeatherLocation } from '../types/types';
-import { AppDispatch, fetchForecast, selectLastLocation, setLastLocation, setRecentLocations } from '../redux';
+import { AppDispatch, fetchForecast, selectForecastView, setForecastView, setLastLocation, setRecentLocations } from '../redux';
 import { useDispatch, useSelector } from 'react-redux';
 import Forecast from './Forecast';
+
+type ForecastView = 'daily' | 'hourly';
 
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const lastLocation: ShWeatherLocation | null = useSelector(selectLastLocation);
+  const forecastView: ForecastView = useSelector(selectForecastView);
 
   const [placeName, setPlaceName] = useState('');
-  const [activeLocationLabel, setActiveLocationLabel] = useState(''); // NEW
+  const [activeLocationLabel, setActiveLocationLabel] = useState('');
 
   useEffect(() => {
     // guard: avoid double-run in React 18 StrictMode (dev)
     if ((window as any).__shweather_init_done__) return;
     (window as any).__shweather_init_done__ = true;
+
+    const getForecastView = (): ForecastView => {
+      const forecastView = localStorage.getItem('forecastView');
+      return forecastView === 'hourly' ? 'hourly' : 'daily';
+    };
 
     const getLastLocation = (): ShWeatherLocation | null => {
       const lastLocation = localStorage.getItem('lastLocation');
@@ -35,18 +42,25 @@ const AppShell: React.FC = () => {
       return recent ? (JSON.parse(recent) as ShWeatherLocation[]) : [];
     };
 
-    const lastLocation = getLastLocation();
-    console.log('lastLocation:', lastLocation);
-    dispatch(setLastLocation(lastLocation));
+    dispatch(setForecastView(getForecastView()));
+
     dispatch(setRecentLocations(getRecentLocations()));
 
+    const lastLocation = getLastLocation();
+    dispatch(setLastLocation(lastLocation));
+
     if (lastLocation) {
-      // ✅ ensure the header shows the saved location on startup
       setActiveLocationLabel(lastLocation.friendlyPlaceName);
       dispatch(fetchForecast({ location: lastLocation.geometry.location }));
     }
   }, [dispatch]);
 
+  const handleChangeForecastView = (_: React.SyntheticEvent, newForecastView: ForecastView) => {
+    dispatch(setForecastView(newForecastView));
+    try {
+      localStorage.setItem('forecastView', newForecastView);
+    } catch { }
+  };
 
   const handleSetShWeatherLocation = async (shWeatherLocation: ShWeatherLocation) => {
     localStorage.setItem('lastLocation', JSON.stringify(shWeatherLocation));
@@ -90,8 +104,22 @@ const AppShell: React.FC = () => {
             />
           </Box>
           <Typography variant="h6" component="h1" gutterBottom>
-            10 Day Weather - {activeLocationLabel || 'Select a location'}
+            {forecastView === 'daily' ? '10 Day Weather' : 'Hourly Weather'} -{' '}
+            {activeLocationLabel || 'Select a location'}
           </Typography>
+
+          {/* View switcher */}
+          <Tabs
+            value={forecastView}
+            onChange={handleChangeForecastView}
+            aria-label="Forecast view switch"
+            textColor="primary"
+            indicatorColor="primary"
+            sx={{ mb: 1 }}
+          >
+            <Tab value="daily" label="10-Day" />
+            <Tab value="hourly" label="Hourly" />
+          </Tabs>
 
           {/* 10 day forecast */}
           <Forecast />
