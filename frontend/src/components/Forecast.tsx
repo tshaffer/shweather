@@ -73,13 +73,22 @@ export default function Forecast() {
     return forecast.map((dailyForecast, index) => renderDailyForecast(dailyForecast, index));
   }
 
+  const renderHoursInForecast = (): JSX.Element[] => {
+    return [<div key="hourly-forecast-placeholder">Hourly forecast view coming soon!</div>];
+  }
+  
   let forecastJSX: JSX.Element[] = [];
   if (forecastView === 'daily') {
     forecastJSX = renderDaysInForecast();
   } else {
-    forecastJSX = [<div key="hourly-forecast-placeholder">Hourly forecast view coming soon!</div>];
+    forecastJSX = renderHoursInForecast();
   }
-  
+
+  console.log('forecast');
+  for (const element of forecast) {
+    console.log(element);
+  }
+
   return (
     <div>
       {forecastJSX}

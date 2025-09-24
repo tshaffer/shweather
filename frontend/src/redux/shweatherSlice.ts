@@ -16,10 +16,10 @@ const initialState: ShweatherState = {
   recentLocations: [],
 };
 
-export const fetchForecast = createAsyncThunk(
+export const fetchDailyForecast = createAsyncThunk(
   'forecast/fetchForecast',
   async ({ location: locationCoordinates }: { location: google.maps.LatLngLiteral }) => {
-    const response = await axios.get('/api/v1/forecast', {
+    const response = await axios.get('/api/v1/dailyForecast', {
       params: { location: JSON.stringify(locationCoordinates) },
     });
     return { days: response.data.days };
@@ -51,7 +51,7 @@ const shweatherSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchForecast.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchDailyForecast.fulfilled, (state, action: PayloadAction<any>) => {
         const fetchForecastResponse: FetchForecastResponse = action.payload;
         const { days: forecast } = fetchForecastResponse;
         state.dailyForecasts = forecast.filter(d => !isBeforeToday(d.displayDate));

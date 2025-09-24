@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
 import { ForecastView, ShWeatherLocation } from '../types/types';
-import { AppDispatch, fetchForecast, selectForecastView, setForecastView, setLastLocation, setRecentLocations } from '../redux';
+import { AppDispatch, fetchDailyForecast, selectForecastView, setForecastView, setLastLocation, setRecentLocations } from '../redux';
 import { useDispatch, useSelector } from 'react-redux';
 import Forecast from './Forecast';
 
@@ -49,7 +49,7 @@ const AppShell: React.FC = () => {
 
     if (lastLocation) {
       setActiveLocationLabel(lastLocation.friendlyPlaceName);
-      dispatch(fetchForecast({ location: lastLocation.geometry.location }));
+      dispatch(fetchDailyForecast({ location: lastLocation.geometry.location }));
     }
   }, [dispatch]);
 
@@ -63,7 +63,7 @@ const AppShell: React.FC = () => {
   const handleSetShWeatherLocation = async (shWeatherLocation: ShWeatherLocation) => {
     localStorage.setItem('lastLocation', JSON.stringify(shWeatherLocation));
     dispatch(setLastLocation(shWeatherLocation));
-    dispatch(fetchForecast({ location: shWeatherLocation.geometry.location }));
+    dispatch(fetchDailyForecast({ location: shWeatherLocation.geometry.location }));
     setActiveLocationLabel(shWeatherLocation.friendlyPlaceName); // ✅ keep header in sync
   };
 
