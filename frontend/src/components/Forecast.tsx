@@ -3,12 +3,12 @@ import {
   Stack,
   Collapse,
 } from "@mui/material";
-import { DailyForecastDay } from "../types";
+import { DailyForecastDay, ForecastView } from "../types";
 import ForecastDetails from "./ForecastDetails";
 import DailyForecast from "./DailyForecast";
 import { JSX, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectDailyForecasts } from "../redux";
+import { selectDailyForecasts, selectForecastView } from "../redux";
 
 // near the top of Forecast.tsx
 const COL = {
@@ -21,6 +21,8 @@ const COL = {
 };
 
 export default function Forecast() {
+
+  const forecastView: ForecastView = useSelector(selectForecastView);
 
   const forecast: DailyForecastDay[] = useSelector(selectDailyForecasts);
 
@@ -71,11 +73,16 @@ export default function Forecast() {
     return forecast.map((dailyForecast, index) => renderDailyForecast(dailyForecast, index));
   }
 
-  const daysInForecast: JSX.Element[] = renderDaysInForecast();
-
+  let forecastJSX: JSX.Element[] = [];
+  if (forecastView === 'daily') {
+    forecastJSX = renderDaysInForecast();
+  } else {
+    forecastJSX = [<div key="hourly-forecast-placeholder">Hourly forecast view coming soon!</div>];
+  }
+  
   return (
     <div>
-      {daysInForecast}
+      {forecastJSX}
     </div >
   );
 }
