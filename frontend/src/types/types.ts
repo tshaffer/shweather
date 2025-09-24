@@ -1,5 +1,7 @@
 import { DailyForecastDay, GoogleGeometry } from "./googleInterfaces";
 
+export type ForecastView = 'daily' | 'hourly';
+
 export interface FetchForecastResponse {
   days: DailyForecastDay[];
 }

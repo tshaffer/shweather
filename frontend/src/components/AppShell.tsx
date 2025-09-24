@@ -5,12 +5,10 @@ import { AppBar, Box, CssBaseline, IconButton, Paper, Tab, Tabs, Toolbar, Typogr
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
-import { ShWeatherLocation } from '../types/types';
+import { ForecastView, ShWeatherLocation } from '../types/types';
 import { AppDispatch, fetchForecast, selectForecastView, setForecastView, setLastLocation, setRecentLocations } from '../redux';
 import { useDispatch, useSelector } from 'react-redux';
 import Forecast from './Forecast';
-
-type ForecastView = 'daily' | 'hourly';
 
 // ---------------------- AppShell ----------------------
 const AppShell: React.FC = () => {
