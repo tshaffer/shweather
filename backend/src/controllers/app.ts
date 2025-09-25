@@ -31,7 +31,7 @@ export const getHourlyForecast = async (request: Request, response: Response, ne
   const googleLocation = JSON.parse(location) as { lat: number; lng: number };
   console.log('Parsed location:', googleLocation);
 
-  const hours: ForecastHour[] = await getHourForecasts(googleLocation.lat, googleLocation.lng, 10);
+  const hours: ForecastHour[] = await getHourForecasts(googleLocation.lat, googleLocation.lng, 72);
   console.log('Forecast hours:', hours);
 
   return response.json({

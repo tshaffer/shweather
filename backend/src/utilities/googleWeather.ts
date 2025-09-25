@@ -47,7 +47,7 @@ export async function getDayForecasts(
 export async function getHourForecasts(
   lat: number,
   lng: number,
-  hours = 240,
+  hours = 72,
   pageSize = 5
 ): Promise<ForecastHour[]> {
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;

@@ -1,9 +1,30 @@
-import { ForecastHour, TimeOfDay } from '../types';
+import { ForecastHour, TimeOfDay, WeatherCondition } from '../types';
 import { Stack, Typography, Box, IconButton } from '@mui/material';
 import dayjs from 'dayjs';
 import { fmtPct, fmtTempF, toMph } from '../utilities';
 import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
 import AirIcon from "@mui/icons-material/Air";
+import { WbSunny as SunnyIcon } from "@mui/icons-material";
+
+// Derive a condition label + icon from the forecast.
+type ConditionView = {
+  label: string;
+  iconUrl?: string;                 // from Google
+  FallbackIcon: typeof SunnyIcon;   // MUI fallback
+};
+
+// ---------- Display helpers (compact, single-line) ----------
+
+function conditionFromForecast(hourlyForecast: ForecastHour): ConditionView {
+
+  const weatherCondition: WeatherCondition | undefined = hourlyForecast.weatherCondition;
+  const label = weatherCondition?.description?.text || "—";
+
+  // Google returns a base URI; append .svg (add "_dark" if you want a dark theme variant)
+  const iconUrl = weatherCondition?.iconBaseUri ? `${weatherCondition.iconBaseUri}.svg` : undefined;
+
+  return { label, iconUrl, FallbackIcon: SunnyIcon };
+}
 
 export default function HourlyForecast({
   hourlyForecast,
@@ -24,6 +45,7 @@ export default function HourlyForecast({
   const temperature = fmtTempF(hourlyForecast.temperature.degrees);
   const precip = hourlyForecast!.precipitation!.probability!.percent;
   const windMph = toMph(hourlyForecast!.wind!.speed!.value);
+  const { label, iconUrl, FallbackIcon } = conditionFromForecast(hourlyForecast);
 
   function formatTimeOfDay(timeOfDay: TimeOfDay): string {
     const date = new Date(
@@ -54,6 +76,23 @@ export default function HourlyForecast({
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.temp, minWidth: w.temp, flexShrink: 0 }}>
         <Typography variant="body2" fontWeight={700}>
           {temperature}
+        </Typography>
+      </Stack>
+
+      {/* Condition */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={0.5}
+        sx={{ width: w.condition, minWidth: w.condition, flexShrink: 0, overflow: "hidden" }}
+      >
+        {iconUrl ? (
+          <Box component="img" src={iconUrl} alt={label} sx={{ width: 20, height: 20, display: "block", flexShrink: 0 }} />
+        ) : (
+          <FallbackIcon fontSize="small" />
+        )}
+        <Typography variant="body2" noWrap title={label}>
+          {label}
         </Typography>
       </Stack>
 

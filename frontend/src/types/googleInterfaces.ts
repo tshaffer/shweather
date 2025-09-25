@@ -115,7 +115,7 @@ export type TimeOfDay = { year: number; month: number; day: number, hours: numbe
 export interface ForecastHour {
   interval: { startTime: string; endTime: string };
   displayDateTime: TimeOfDay;
-  weatherCondition: { description: WeatherConditionDescription; type: string; iconBaseUri?: string };
+  weatherCondition: WeatherCondition;
   temperature: Temperature;
   feelsLikeTemperature: Temperature;
   dewPoint: Temperature;
