@@ -26,7 +26,17 @@ export default function HourlyForecast({
   const windMph = toMph(hourlyForecast!.wind!.speed!.value);
 
   function formatTimeOfDay(timeOfDay: TimeOfDay): string {
-    return dayjs(new Date(timeOfDay.year, timeOfDay.month - 1, timeOfDay.day)).format("ddd MMM D");
+    const date = new Date(
+      timeOfDay.year,
+      timeOfDay.month - 1, // JS months are 0-based
+      timeOfDay.day,
+      timeOfDay.hours,
+      timeOfDay.minutes,
+      timeOfDay.seconds
+    );
+
+    // `h:mm A` → 12-hour format and AM/PM
+    return dayjs(date).format("h A");
   }
 
   return (
