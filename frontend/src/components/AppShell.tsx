@@ -40,7 +40,8 @@ const AppShell: React.FC = () => {
       return recent ? (JSON.parse(recent) as ShWeatherLocation[]) : [];
     };
 
-    dispatch(setForecastView(getForecastView()));
+    const startupForecastView = getForecastView();
+    dispatch(setForecastView(startupForecastView));
 
     dispatch(setRecentLocations(getRecentLocations()));
 
@@ -49,8 +50,11 @@ const AppShell: React.FC = () => {
 
     if (lastLocation) {
       setActiveLocationLabel(lastLocation.friendlyPlaceName);
-      // dispatch(fetchDailyForecast({ location: lastLocation.geometry.location }));
-      dispatch(fetchHourlyForecast({ location: lastLocation.geometry.location }));
+      if (startupForecastView === 'daily') {
+        dispatch(fetchDailyForecast({ location: lastLocation.geometry.location }));
+      } else {
+        dispatch(fetchHourlyForecast({ location: lastLocation.geometry.location }));
+      }
     }
   }, [dispatch]);
 
