@@ -80,7 +80,7 @@ const AppShell: React.FC = () => {
 
     return (
       <Paper
-        id="map-page"
+        id="weather-page"
         style={{
           padding: '24px',
           minHeight: '100%',
@@ -90,14 +90,14 @@ const AppShell: React.FC = () => {
       >
         {/* Header */}
         <Box
-          id="map-page-header"
+          id="weather-page-header"
           sx={{
             marginBottom: 2,
             width: '100%',
           }}
         >
           <Box
-            id="map-page-locationAutocomplete-container"
+            id="weather-page-locationAutocomplete-container"
             sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0, marginBottom: 2 }}
           >
             <LocationAutocomplete

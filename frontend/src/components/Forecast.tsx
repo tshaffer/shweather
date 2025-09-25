@@ -3,12 +3,13 @@ import {
   Stack,
   Collapse,
 } from "@mui/material";
-import { DailyForecastDay, ForecastView } from "../types";
+import { DailyForecastDay, ForecastHour, ForecastView } from "../types";
 import ForecastDetails from "./ForecastDetails";
 import DailyForecast from "./DailyForecast";
 import { JSX, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectDailyForecasts, selectForecastView } from "../redux";
+import { selectDailyForecasts, selectForecastView, selectHourlyForecasts } from "../redux";
+import HourlyForecast from "./HourlyForecast";
 
 // near the top of Forecast.tsx
 const COL = {
@@ -20,11 +21,20 @@ const COL = {
   toggle: 36,
 };
 
+const HOURLY_COLUMNS = {
+  timeOfDay: 160,
+  temp: 72,
+  condition: 180,
+  precip: 64,
+  wind: 88,
+};
+
 export default function Forecast() {
 
   const forecastView: ForecastView = useSelector(selectForecastView);
 
   const forecast: DailyForecastDay[] = useSelector(selectDailyForecasts);
+  const hourlyForecasts: ForecastHour[] = useSelector(selectHourlyForecasts);
 
   const [openRows, setOpenRows] = useState<boolean[]>([]);
   const toggleRow = (i: number) =>
@@ -73,10 +83,36 @@ export default function Forecast() {
     return forecast.map((dailyForecast, index) => renderDailyForecast(dailyForecast, index));
   }
 
-  const renderHoursInForecast = (): JSX.Element[] => {
-    return [<div key="hourly-forecast-placeholder">Hourly forecast view coming soon!</div>];
+  const renderHourlyForecast = (hourlyForecast: ForecastHour, idx: number): JSX.Element => {
+    return (
+      <Box
+        className="rounded-2xl border border-gray-200"
+        sx={{ p: 0.75 }}
+        key={hourlyForecast.displayDateTime.toString()}
+      >
+        <Stack direction="row" alignItems="center" gap={0.75} sx={{ flexWrap: "nowrap" }} key={hourlyForecast.displayDateTime.toString()}>
+          <Box key={hourlyForecast.displayDateTime.toString()}>
+            <HourlyForecast
+              hourlyForecast={hourlyForecast}
+              key={hourlyForecast.displayDateTime.toString()}
+              columnWidths={{
+                timeOfDay: HOURLY_COLUMNS.timeOfDay,
+                temp: HOURLY_COLUMNS.temp,
+                condition: HOURLY_COLUMNS.condition,
+                precip: HOURLY_COLUMNS.precip,
+                wind: HOURLY_COLUMNS.wind,
+              }}
+            />
+          </Box>
+        </Stack>
+      </Box>
+    );
   }
-  
+
+  const renderHoursInForecast = (): JSX.Element[] => {
+    return hourlyForecasts.map((hourlyForecast, index) => renderHourlyForecast(hourlyForecast, index));
+  }
+
   let forecastJSX: JSX.Element[] = [];
   if (forecastView === 'daily') {
     forecastJSX = renderDaysInForecast();
@@ -95,3 +131,4 @@ export default function Forecast() {
     </div >
   );
 }
+

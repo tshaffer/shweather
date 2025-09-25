@@ -1,9 +1,67 @@
-import React from 'react';
+import { ForecastHour, TimeOfDay } from '../types';
+import { Stack, Typography, Box, IconButton } from '@mui/material';
+import dayjs from 'dayjs';
+import { fmtPct, fmtTempF, toMph } from '../utilities';
+import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
+import AirIcon from "@mui/icons-material/Air";
 
-const HourlyForecast: React.FC = () => {
+export default function HourlyForecast({
+  hourlyForecast,
+  columnWidths,
+}: {
+  hourlyForecast: ForecastHour,
+  columnWidths: Partial<{ timeOfDay: number, temp: number; condition: number; precip: number; wind: number }>
+}) {
+
+  const w = {
+    timeOfDay: columnWidths?.timeOfDay ?? 180,
+    temp: columnWidths?.temp ?? 72,
+    condition: columnWidths?.condition ?? 160,
+    precip: columnWidths?.precip ?? 64,
+    wind: columnWidths?.wind ?? 88,
+  };
+
+  const temperature = fmtTempF(hourlyForecast.temperature.degrees);
+  const precip = hourlyForecast!.precipitation!.probability!.percent;
+  const windMph = toMph(hourlyForecast!.wind!.speed!.value);
+
+  function formatTimeOfDay(timeOfDay: TimeOfDay): string {
+    return dayjs(new Date(timeOfDay.year, timeOfDay.month - 1, timeOfDay.day)).format("ddd MMM D");
+  }
+
   return (
-    <div>pizza</div>
-  )
+    <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap: "nowrap", ml: 1, whiteSpace: "nowrap" }}>
+
+      {/* Time of Day */}
+      <Typography
+        sx={{ width: w.timeOfDay, minWidth: w.timeOfDay, lineHeight: 1.2, flexShrink: 0, whiteSpace: "nowrap" }}
+        color="text.secondary"
+      >
+        {formatTimeOfDay(hourlyForecast.displayDateTime)}
+      </Typography>
+
+      {/* Temperature */}
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.temp, minWidth: w.temp, flexShrink: 0 }}>
+        <Typography variant="body2" fontWeight={700}>
+          {temperature}
+        </Typography>
+      </Stack>
+
+      {/* Precip */}
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.precip, minWidth: w.precip, flexShrink: 0 }}>
+        <WaterDropOutlinedIcon fontSize="small" />
+        <Typography variant="body2">{fmtPct(precip)}</Typography>
+      </Stack>
+
+      {/* Wind */}
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.wind, minWidth: w.wind, flexShrink: 0 }}>
+        <AirIcon fontSize="small" />
+        <Typography variant="body2">
+          {typeof windMph === "number" ? `${windMph} mph` : "—"}
+        </Typography>
+      </Stack>
+
+    </Stack>
+  );
 }
 
-export default HourlyForecast;

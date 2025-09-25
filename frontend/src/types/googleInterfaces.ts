@@ -110,9 +110,11 @@ export interface PrecipitationProbability {
   percent: number;
 }
 
+export type TimeOfDay = { year: number; month: number; day: number, hours: number; minutes: number; seconds: number; nanos?: number; utcOffset?: string };
+
 export interface ForecastHour {
   interval: { startTime: string; endTime: string };
-  displayDateTime: { year: number; month: number; day: number, hours: number; minutes: number; seconds: number; nanos?: number; utcOffset?: string };
+  displayDateTime: TimeOfDay;
   weatherCondition: { description: WeatherConditionDescription; type: string; iconBaseUri?: string };
   temperature: Temperature;
   feelsLikeTemperature: Temperature;

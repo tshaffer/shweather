@@ -7,7 +7,7 @@ import {
 import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
 import AirIcon from "@mui/icons-material/Air";
 import { DailyForecastDay, WeatherCondition } from "../types";
-import { fmtTempF } from "../utilities";
+import { fmtPct, fmtTempF, toMph } from "../utilities";
 import { WbSunny as SunnyIcon } from "@mui/icons-material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -21,9 +21,6 @@ type ConditionView = {
 };
 
 // ---------- Display helpers (compact, single-line) ----------
-const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
-const toMph = (kph?: number) =>
-  typeof kph === "number" ? Math.round(kph * 0.621371) : undefined;
 
 function conditionFromForecast(dailyForecastDay: DailyForecastDay): ConditionView {
 
@@ -64,7 +61,6 @@ export default function DailyForecast({
   const lo = fmtTempF(dailyForecastDay.minTemperature?.degrees); // then Low
 
   const { label, iconUrl, FallbackIcon } = conditionFromForecast(dailyForecastDay);
-
 
   function formatDisplayDate(d: { year: number; month: number; day: number }): string {
     // Note: month - 1 because JS Date constructor expects 0–11
