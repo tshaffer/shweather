@@ -7,7 +7,7 @@ export interface ForecastDaysResponse {
 }
 
 export interface ForecastHoursResponse {
-  forecastHours: ForecastHour[];
+  hours: ForecastHour[];
   timeZone?: { id: string };
   nextPageToken?: string;
 }

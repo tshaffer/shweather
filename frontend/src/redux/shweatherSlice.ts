@@ -70,8 +70,8 @@ const shweatherSlice = createSlice({
       })
       .addCase(fetchHourlyForecast.fulfilled, (state, action: PayloadAction<any>) => {
         const fetchForecastResponse: ForecastHoursResponse = action.payload;
-        const { forecastHours }  = fetchForecastResponse;
-        state.hourlyForecasts = forecastHours;
+        const { hours } = fetchForecastResponse;
+        state.hourlyForecasts = hours;
       });
   },
 });

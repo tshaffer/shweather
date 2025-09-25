@@ -8,6 +8,7 @@ import { ForecastDay, ForecastDaysResponse, ForecastHoursResponse } from "google
 import { ForecastHour } from "googleInterfaces";
 
 const DAILY_FORECAST_BASE = "https://weather.googleapis.com/v1/forecast/days:lookup";
+const HOURLY_FORECAST_BASE = "https://weather.googleapis.com/v1/forecast/hours:lookup";
 
 /**
  * Fetch up to `days` of daily forecasts (max 10).
@@ -65,7 +66,7 @@ export async function getHourForecasts(
     };
     if (pageToken) params.pageToken = pageToken;
 
-    const { data } = await axios.get<ForecastHoursResponse>(DAILY_FORECAST_BASE, { params });
+    const { data } = await axios.get<ForecastHoursResponse>(HOURLY_FORECAST_BASE, { params });
     out = out.concat(data.forecastHours ?? []);
     pageToken = data.nextPageToken;
   } while (pageToken && out.length < hours);

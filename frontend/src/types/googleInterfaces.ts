@@ -2,6 +2,8 @@ export interface GoogleGeometry {
   location: google.maps.LatLngLiteral;
 }
 
+export type Temperature = { degrees: number; unit: string };
+
 export interface ForecastDayPart {
   interval?: { startTime: string; endTime: string }; // *
   weatherCondition?: WeatherCondition; // *
@@ -98,33 +100,38 @@ export enum WeatherConditionType {
   HEAVY_THUNDERSTORM = "Heavy thunderstorm.",
 }
 
+export interface WeatherConditionDescription {
+  text: string;
+  languageCode: string;
+}
+
+export interface PrecipitationProbability {
+  type: string;
+  percent: number;
+}
+
 export interface ForecastHour {
   interval: { startTime: string; endTime: string };
-  displayDateTime: { year: number; month: number; day: number };
-  weatherCondition: { description: string; type: string; iconBaseUri?: string };
+  displayDateTime: { year: number; month: number; day: number, hours: number; minutes: number; seconds: number; nanos?: number; utcOffset?: string };
+  weatherCondition: { description: WeatherConditionDescription; type: string; iconBaseUri?: string };
   temperature: Temperature;
   feelsLikeTemperature: Temperature;
-  dewPoint?: Temperature;
-  heatIndex?: Temperature;
-  windChill?: Temperature;
+  dewPoint: Temperature;
+  heatIndex: Temperature;
+  windChill: Temperature;
   wetBulbTemperature?: Temperature;
-  // https://developers.google.com/maps/documentation/weather/reference/rest/v1/Precipitation
   precipitation?: {
-    probability?: number;
+    probability?: PrecipitationProbability;
     qpf?: any;
     snowQpf?: any;
   };
   airPressure: any;
   wind?: { speed: { value: number; unit: string }; direction?: { degrees: number; localizedDescription?: string } };
-  visibility?: any;
+  visibility?: { unit: string; distance: number };
   iceThickness?: { thickness: number; unit: string };
   isDaytime: boolean;
   relativeHumidity: number;
   uvIndex: number;
   thunderstormProbability: number;
   cloudCover: number;
-}
-export interface Temperature {
-  degrees: number;
-  unit: string;
 }

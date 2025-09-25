@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
 import { ForecastView, ShWeatherLocation } from '../types/types';
-import { AppDispatch, fetchDailyForecast, selectForecastView, setForecastView, setLastLocation, setRecentLocations } from '../redux';
+import { AppDispatch, fetchDailyForecast, fetchHourlyForecast, selectForecastView, setForecastView, setLastLocation, setRecentLocations } from '../redux';
 import { useDispatch, useSelector } from 'react-redux';
 import Forecast from './Forecast';
 
@@ -49,7 +49,8 @@ const AppShell: React.FC = () => {
 
     if (lastLocation) {
       setActiveLocationLabel(lastLocation.friendlyPlaceName);
-      dispatch(fetchDailyForecast({ location: lastLocation.geometry.location }));
+      // dispatch(fetchDailyForecast({ location: lastLocation.geometry.location }));
+      dispatch(fetchHourlyForecast({ location: lastLocation.geometry.location }));
     }
   }, [dispatch]);
 
