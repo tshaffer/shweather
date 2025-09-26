@@ -89,40 +89,35 @@ const AppShell: React.FC = () => {
 
   const renderWeather = (): JSX.Element => {
 
+    // inside renderWeather()
     return (
       <Paper
         id="weather-page"
         style={{
           padding: '24px',
-          minHeight: '100%',
           height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
           overflow: 'hidden',
         }}
       >
-        {/* Header */}
+        {/* Header (stays fixed) */}
         <Box
           id="weather-page-header"
-          sx={{
-            marginBottom: 2,
-            width: '100%',
-          }}
+          sx={{ mb: 2, width: '100%' }}
         >
-          <Box
-            id="weather-page-locationAutocomplete-container"
-            sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0, marginBottom: 2 }}
-          >
+          <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0, mb: 2 }}>
             <LocationAutocomplete
               placeName={placeName}
               onSetPlaceName={(name: string) => setPlaceName(name)}
-              onSetShWeatherLocation={(shWeatherLocation: ShWeatherLocation) => handleSetShWeatherLocation(shWeatherLocation)}
+              onSetShWeatherLocation={handleSetShWeatherLocation}
             />
           </Box>
+
           <Typography variant="h6" component="h1" gutterBottom>
-            {forecastView === 'daily' ? '10 Day Weather' : 'Hourly Weather'} -{' '}
-            {activeLocationLabel || 'Select a location'}
+            {forecastView === 'daily' ? '10 Day Weather' : 'Hourly Weather'} — {activeLocationLabel || 'Select a location'}
           </Typography>
 
-          {/* View switcher */}
           <Tabs
             value={forecastView}
             onChange={handleChangeForecastView}
@@ -134,8 +129,10 @@ const AppShell: React.FC = () => {
             <Tab value="daily" label="10-Day" />
             <Tab value="hourly" label="Hourly" />
           </Tabs>
+        </Box>
 
-          {/* 10 day forecast */}
+        {/* Scrollable content */}
+        <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', pr: 1 }}>
           <Forecast />
         </Box>
       </Paper>

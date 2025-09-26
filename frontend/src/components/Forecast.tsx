@@ -113,7 +113,7 @@ export default function Forecast() {
     return hourlyForecasts.map((hourlyForecast, index) => renderHourlyForecast(hourlyForecast, index));
   }
 
-  console.log('Forecast render', forecastView );
+  console.log('Forecast render', forecastView);
 
   let forecastJSX: JSX.Element[] = [];
   if (forecastView === 'daily') {
@@ -122,10 +122,11 @@ export default function Forecast() {
     forecastJSX = renderHoursInForecast();
   }
 
+  // at the bottom of Forecast.tsx
   return (
-    <div>
+    <Box>
       {forecastJSX}
-    </div >
+    </Box>
   );
 }
 
