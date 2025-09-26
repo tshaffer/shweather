@@ -79,10 +79,6 @@ export default function Forecast() {
     );
   }
 
-  const renderDaysInForecast = (): JSX.Element[] => {
-    return forecast.map((dailyForecast, index) => renderDailyForecast(dailyForecast, index));
-  }
-
   const renderHourlyForecast = (hourlyForecast: ForecastHour, idx: number): JSX.Element => {
     return (
       <Box
@@ -109,20 +105,21 @@ export default function Forecast() {
     );
   }
 
+  const renderDaysInForecast = (): JSX.Element[] => {
+    return forecast.map((dailyForecast, index) => renderDailyForecast(dailyForecast, index));
+  }
+
   const renderHoursInForecast = (): JSX.Element[] => {
     return hourlyForecasts.map((hourlyForecast, index) => renderHourlyForecast(hourlyForecast, index));
   }
+
+  console.log('Forecast render', forecastView );
 
   let forecastJSX: JSX.Element[] = [];
   if (forecastView === 'daily') {
     forecastJSX = renderDaysInForecast();
   } else {
     forecastJSX = renderHoursInForecast();
-  }
-
-  console.log('forecast');
-  for (const element of forecast) {
-    console.log(element);
   }
 
   return (

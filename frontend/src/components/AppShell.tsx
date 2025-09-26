@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocationAutocomplete from './LocationAutocomplete';
 import GoogleMapsProvider from './GoogleMapsProvider';
 import { ForecastView, ShWeatherLocation } from '../types/types';
-import { AppDispatch, fetchDailyForecast, fetchHourlyForecast, selectForecastView, setForecastView, setLastLocation, setRecentLocations } from '../redux';
+import { AppDispatch, fetchDailyForecast, fetchHourlyForecast, selectForecastView, selectLastLocation, setForecastView, setLastLocation, setRecentLocations } from '../redux';
 import { useDispatch, useSelector } from 'react-redux';
 import Forecast from './Forecast';
 
@@ -16,6 +16,7 @@ const AppShell: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const forecastView: ForecastView = useSelector(selectForecastView);
+  const lastLocation: ShWeatherLocation | null = useSelector(selectLastLocation);
 
   const [placeName, setPlaceName] = useState('');
   const [activeLocationLabel, setActiveLocationLabel] = useState('');
@@ -63,12 +64,22 @@ const AppShell: React.FC = () => {
     try {
       localStorage.setItem('forecastView', newForecastView);
     } catch { }
+    if (lastLocation === null) return;
+    if (newForecastView === 'hourly') {
+      dispatch(fetchHourlyForecast({ location: lastLocation.geometry.location }));
+    } else {
+      dispatch(fetchDailyForecast({ location: lastLocation.geometry.location }));
+    }
   };
 
   const handleSetShWeatherLocation = async (shWeatherLocation: ShWeatherLocation) => {
     localStorage.setItem('lastLocation', JSON.stringify(shWeatherLocation));
     dispatch(setLastLocation(shWeatherLocation));
-    dispatch(fetchDailyForecast({ location: shWeatherLocation.geometry.location }));
+    if (forecastView === 'hourly') {
+      dispatch(fetchHourlyForecast({ location: shWeatherLocation.geometry.location }));
+    } else {
+      dispatch(fetchDailyForecast({ location: shWeatherLocation.geometry.location }));
+    }
     setActiveLocationLabel(shWeatherLocation.friendlyPlaceName); // ✅ keep header in sync
   };
 
