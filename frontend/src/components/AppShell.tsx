@@ -133,7 +133,7 @@ const AppShell: React.FC = () => {
 
         {/* Scrollable content */}
         <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', pr: 1 }}>
-          <Forecast />
+          <Forecast key={forecastView} />
         </Box>
       </Paper>
     );
