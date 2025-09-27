@@ -163,15 +163,17 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
   };
 
   const addRecentLocation = (shweatherLocation: ShWeatherLocation) => {
-    // Check for duplicates
-    const exists = recentLocations.some(loc => loc.friendlyPlaceName === shweatherLocation.friendlyPlaceName);
-    let updatedLocations = [...recentLocations];
-    if (!exists) {
-      updatedLocations.push(shweatherLocation);
-      dispatch(setRecentLocations(updatedLocations));
-      localStorage.setItem('recentLocations', JSON.stringify(updatedLocations));
-    }
-  }
+    // Remove any existing entry with the same placeId
+    let updatedLocations = recentLocations.filter(
+      loc => loc.googlePlaceId !== shweatherLocation.googlePlaceId
+    );
+
+    // Add new location at the front
+    updatedLocations.unshift(shweatherLocation);
+
+    dispatch(setRecentLocations(updatedLocations));
+    localStorage.setItem('recentLocations', JSON.stringify(updatedLocations));
+  };
 
   const handleDeleteLocation = (labelToDelete: string) => {
     const updated = recentLocations.filter(loc => loc.friendlyPlaceName !== labelToDelete);
@@ -280,25 +282,22 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
         <DialogTitle>Manage Saved Locations</DialogTitle>
         <DialogContent>
           <List dense>
-            {recentLocations
-              .slice()
-              .sort((a, b) => a.friendlyPlaceName.localeCompare(b.friendlyPlaceName))
-              .map((loc) => (
-                <ListItem
-                  key={loc.friendlyPlaceName}
-                  secondaryAction={
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => handleDeleteLocation(loc.friendlyPlaceName)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  }
-                >
-                  <ListItemText primary={loc.friendlyPlaceName} />
-                </ListItem>
-              ))}
+            {recentLocations.map((loc) => (
+              <ListItem
+                key={loc.friendlyPlaceName}
+                secondaryAction={
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleDeleteLocation(loc.friendlyPlaceName)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                }
+              >
+                <ListItemText primary={loc.friendlyPlaceName} />
+              </ListItem>
+            ))}
           </List>
         </DialogContent>
       </Dialog>
