@@ -170,9 +170,12 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
 
     // Add new location at the front
     updatedLocations.unshift(shweatherLocation);
-
-    dispatch(setRecentLocations(updatedLocations));
-    localStorage.setItem('recentLocations', JSON.stringify(updatedLocations));
+    
+    // Limit to 15 locations
+    if (updatedLocations.length > 15) {
+      updatedLocations = updatedLocations.slice(0, 15);
+    }
+    saveRecentLocations(updatedLocations);
   };
 
   const handleDeleteLocation = (labelToDelete: string) => {
@@ -191,9 +194,27 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
 
     const selected = recentLocations.find(loc => loc.friendlyPlaceName === key);
     if (selected) {
+      // clear the autocomplete text
       onSetPlaceName('');
+
+      // notify parent (fetch forecast, etc.)
       onSetShWeatherLocation(selected);
+
+      // ⬅️ move this location to the front (MRU)
+      bumpRecentLocationToFront(selected);
     }
+  };
+
+  const saveRecentLocations = (arr: ShWeatherLocation[]) => {
+    dispatch(setRecentLocations(arr));
+    localStorage.setItem('recentLocations', JSON.stringify(arr));
+  };
+
+  const bumpRecentLocationToFront = (loc: ShWeatherLocation) => {
+    // remove any existing instance, then unshift
+    const updated = recentLocations.filter(l => l.googlePlaceId !== loc.googlePlaceId);
+    updated.unshift(loc);
+    saveRecentLocations(updated);
   };
 
   return (
