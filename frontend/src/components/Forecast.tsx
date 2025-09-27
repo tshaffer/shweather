@@ -10,6 +10,7 @@ import { JSX, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectDailyForecasts, selectForecastView, selectHourlyForecasts } from "../redux";
 import HourlyForecast from "./HourlyForecast";
+import HourlyForecastDetails from "./HourlyForecastDetails";
 
 // near the top of Forecast.tsx
 const COL = {
@@ -110,16 +111,24 @@ export default function Forecast() {
             <HourlyForecast
               hourlyForecast={hourlyForecast}
               key={hourKey}
+              open={!!openRows[idx]}
+              onToggle={() => toggleRow(idx)}
               columnWidths={{
                 timeOfDay: HOURLY_COLUMNS.timeOfDay,
                 temp: HOURLY_COLUMNS.temp,
                 condition: HOURLY_COLUMNS.condition,
                 precip: HOURLY_COLUMNS.precip,
                 wind: HOURLY_COLUMNS.wind,
+                toggle: COL.toggle,
+
               }}
             />
           </Box>
         </Stack>
+
+        <Collapse in={!!openRows[idx]} timeout="auto" unmountOnExit>
+          <HourlyForecastDetails hourlyForecast={hourlyForecast} key={hourKey} />
+        </Collapse>
       </Box>
     );
   }

@@ -5,6 +5,8 @@ import { fmtPct, fmtTempF, toMph } from '../utilities';
 import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
 import AirIcon from "@mui/icons-material/Air";
 import { WbSunny as SunnyIcon } from "@mui/icons-material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 // Derive a condition label + icon from the forecast.
 type ConditionView = {
@@ -29,9 +31,13 @@ function conditionFromForecast(hourlyForecast: ForecastHour): ConditionView {
 export default function HourlyForecast({
   hourlyForecast,
   columnWidths,
+  open,
+  onToggle,
 }: {
   hourlyForecast: ForecastHour,
-  columnWidths: Partial<{ timeOfDay: number, temp: number; condition: number; precip: number; wind: number }>
+  columnWidths: Partial<{ timeOfDay: number, temp: number; condition: number; precip: number; wind: number; toggle: number }>,
+  open: boolean,
+  onToggle: () => void,
 }) {
 
   const w = {
@@ -40,6 +46,7 @@ export default function HourlyForecast({
     condition: columnWidths?.condition ?? 160,
     precip: columnWidths?.precip ?? 64,
     wind: columnWidths?.wind ?? 88,
+    toggle: columnWidths?.toggle ?? 36,
   };
 
   const temperature = fmtTempF(hourlyForecast.temperature.degrees);
@@ -109,6 +116,13 @@ export default function HourlyForecast({
           {typeof windMph === "number" ? `${windMph} mph` : "—"}
         </Typography>
       </Stack>
+
+      {/* Toggle */}
+      <Box sx={{ width: w.toggle, minWidth: w.toggle, flexShrink: 0, display: "flex", justifyContent: "center" }}>
+        <IconButton size="small" onClick={onToggle}>
+          {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
+      </Box>
 
     </Stack>
   );
