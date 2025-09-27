@@ -4,7 +4,6 @@ import {
   Box,
   IconButton,
   Typography,
-  Tooltip,
   Select,
   MenuItem,
 } from '@mui/material';
@@ -16,10 +15,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
   Button
 } from '@mui/material';
-import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Autocomplete } from '@react-google-maps/api';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -93,39 +90,11 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     });
   };
 
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [selectedLocationKey, setSelectedLocationKey] = useState<string>('');
 
   const recentLocations: ShWeatherLocation[] = useSelector(selectRecentLocations);
 
   const [manageDialogOpen, setManageDialogOpen] = useState(false);
-
-  // Get device's current location
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const location = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setCurrentLocation(location);
-      },
-      (error) => console.error('Error getting current location: ', error),
-      { enableHighAccuracy: true }
-    );
-  }, []);
-
-  const handleUseCurrentLocation = () => {
-    console.log('Use Current Location clicked');
-    // if (currentLocation) {
-    //   onSetMapLocation(currentLocation);
-    //   setSelectedLocationKey(''); // Clear dropdown
-    // }
-  };
-
-  // In LocationAutocomplete.tsx
 
   const handlePlaceChanged = () => {
     if (!autocompleteRef.current) return;
@@ -170,7 +139,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
 
     // Add new location at the front
     updatedLocations.unshift(shweatherLocation);
-    
+
     // Limit to 15 locations
     if (updatedLocations.length > 15) {
       updatedLocations = updatedLocations.slice(0, 15);
@@ -227,19 +196,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
         flexWrap: 'wrap',
       }}
     >
-      <Tooltip title="Use Current Location">
-        <IconButton
-          onClick={handleUseCurrentLocation}
-          sx={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            '&:hover': { backgroundColor: '#0056b3' },
-          }}
-        >
-          <MyLocationIcon />
-        </IconButton>
-      </Tooltip>
-
       <Typography variant="body1" sx={{ whiteSpace: 'nowrap' }}>
         Location:
       </Typography>
