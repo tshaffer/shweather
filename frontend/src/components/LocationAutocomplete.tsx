@@ -131,6 +131,18 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
   };
 
+  const saveRecentLocations = (arr: ShWeatherLocation[]) => {
+    dispatch(setRecentLocations(arr));
+    localStorage.setItem('recentLocations', JSON.stringify(arr));
+  };
+
+  const bumpRecentLocationToFront = (loc: ShWeatherLocation) => {
+    // remove any existing instance, then unshift
+    const updated = recentLocations.filter(l => l.googlePlaceId !== loc.googlePlaceId);
+    updated.unshift(loc);
+    saveRecentLocations(updated);
+  };
+
   const addRecentLocation = (shweatherLocation: ShWeatherLocation) => {
     // Remove any existing entry with the same placeId
     let updatedLocations = recentLocations.filter(
@@ -147,12 +159,12 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
     saveRecentLocations(updatedLocations);
   };
 
-  const handleDeleteLocation = (labelToDelete: string) => {
-    const updated = recentLocations.filter(loc => loc.friendlyPlaceName !== labelToDelete);
+  const handleDeleteRecentLocation = (labelOfRecentLocationToDelete: string) => {
+    const updated = recentLocations.filter(loc => loc.friendlyPlaceName !== labelOfRecentLocationToDelete);
     dispatch(setRecentLocations(updated));
     localStorage.setItem('recentLocations', JSON.stringify(updated));
 
-    if (labelToDelete === selectedLocationKey) {
+    if (labelOfRecentLocationToDelete === selectedLocationKey) {
       setSelectedLocationKey('');
     }
   };
@@ -172,18 +184,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
       // ⬅️ move this location to the front (MRU)
       bumpRecentLocationToFront(selected);
     }
-  };
-
-  const saveRecentLocations = (arr: ShWeatherLocation[]) => {
-    dispatch(setRecentLocations(arr));
-    localStorage.setItem('recentLocations', JSON.stringify(arr));
-  };
-
-  const bumpRecentLocationToFront = (loc: ShWeatherLocation) => {
-    // remove any existing instance, then unshift
-    const updated = recentLocations.filter(l => l.googlePlaceId !== loc.googlePlaceId);
-    updated.unshift(loc);
-    saveRecentLocations(updated);
   };
 
   return (
@@ -266,7 +266,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
                   <IconButton
                     edge="end"
                     aria-label="delete"
-                    onClick={() => handleDeleteLocation(loc.friendlyPlaceName)}
+                    onClick={() => handleDeleteRecentLocation(loc.friendlyPlaceName)}
                   >
                     <DeleteIcon />
                   </IconButton>

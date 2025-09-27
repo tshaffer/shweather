@@ -89,7 +89,6 @@ const AppShell: React.FC = () => {
 
   const renderWeather = (): JSX.Element => {
 
-    // inside renderWeather()
     return (
       <Paper
         id="weather-page"
@@ -101,7 +100,6 @@ const AppShell: React.FC = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Header (stays fixed) */}
         <Box
           id="weather-page-header"
           sx={{ mb: 2, width: '100%' }}
@@ -131,7 +129,6 @@ const AppShell: React.FC = () => {
           </Tabs>
         </Box>
 
-        {/* Scrollable content */}
         <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', pr: 1 }}>
           <Forecast key={forecastView} />
         </Box>
