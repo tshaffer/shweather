@@ -40,8 +40,8 @@ export interface DailyForecastDay {
   };
   nighttimeForecast?: ForecastDayPart;
   sunEvents?: {
-    sunrise?: string;
-    sunset?: string;
+    sunriseTime?: string;
+    sunsetTime?: string;
   };
 }
 

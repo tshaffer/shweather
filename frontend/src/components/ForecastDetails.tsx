@@ -1,30 +1,33 @@
-import { DailyForecastDay } from "../types";
+import { DailyForecastDay, ForecastDayPart } from "../types";
 
 const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
 
+/*
+Humidity - day time
+UV Index
+Sunrise
+Sunset
+*/
 export default function ForecastDetails({ dailyForecastDay }: { dailyForecastDay: DailyForecastDay }) {
 
   console.log('ForecastDetails dailyForecastDay:', dailyForecastDay);
-  console.log(dailyForecastDay);
   if (dailyForecastDay) {
-    console.log(dailyForecastDay.daytimeForecast);
     if (dailyForecastDay.daytimeForecast) {
-      console.log(dailyForecastDay.daytimeForecast.uvIndex);
-      console.log(dailyForecastDay.daytimeForecast.cloudCover);
-      console.log(dailyForecastDay.daytimeForecast.wind);
-      if (dailyForecastDay.daytimeForecast.wind) {
-        console.log(dailyForecastDay.daytimeForecast.wind.speed);
-      }
+      console.log('Daytime forecast:', dailyForecastDay.daytimeForecast);
+      const daytimeForecast: ForecastDayPart = dailyForecastDay.daytimeForecast;
+      console.log('uvIndex:', daytimeForecast.uvIndex);
+      console.log('relativeHumidity:', daytimeForecast.relativeHumidity);
     }
+    const sunrise = dailyForecastDay.sunEvents?.sunriseTime;
+    console.log('sunrise:', sunrise);
+    const sunset = dailyForecastDay.sunEvents?.sunsetTime;
+    console.log('sunset:', sunset);
   }
-  const d = dailyForecastDay?.daytimeForecast;
-  const sunrise = dailyForecastDay?.sunEvents?.sunrise;
-  const sunset = dailyForecastDay?.sunEvents?.sunset;
 
   // uv index
   // humidity
   // hourly details
-  
+
   return (
     <>Placeholder details</>
   );
