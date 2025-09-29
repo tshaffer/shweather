@@ -4,6 +4,8 @@ import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 import { ForecastHour } from "../types";
 
+const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
+
 export default function HourlyForecastDetails({ hourlyForecast }: { hourlyForecast: ForecastHour }) {
 
   const relativeHumidity = hourlyForecast.relativeHumidity;
@@ -14,7 +16,7 @@ export default function HourlyForecastDetails({ hourlyForecast }: { hourlyForeca
 
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
         <OpacityIcon fontSize="small" />
-        <Typography variant="body2">Humidity {relativeHumidity}%</Typography>
+        <Typography variant="body2">Humidity {fmtPct(relativeHumidity)}</Typography>
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>

@@ -1,35 +1,59 @@
-import { DailyForecastDay, ForecastDayPart } from "../types";
+import WbTwilightIcon from '@mui/icons-material/WbTwilight';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import OpacityIcon from '@mui/icons-material/Opacity';
+
+import { DailyForecastDay } from "../types";
+import { Stack, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 
 const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
 
-/*
-Humidity - day time
-UV Index
-Sunrise
-Sunset
-*/
+function formatTimeOfDay(isoString: string): string {
+  return dayjs(isoString).format("h:mm a");
+}
+
 export default function ForecastDetails({ dailyForecastDay }: { dailyForecastDay: DailyForecastDay }) {
 
-  console.log('ForecastDetails dailyForecastDay:', dailyForecastDay);
-  if (dailyForecastDay) {
-    if (dailyForecastDay.daytimeForecast) {
-      console.log('Daytime forecast:', dailyForecastDay.daytimeForecast);
-      const daytimeForecast: ForecastDayPart = dailyForecastDay.daytimeForecast;
-      console.log('uvIndex:', daytimeForecast.uvIndex);
-      console.log('relativeHumidity:', daytimeForecast.relativeHumidity);
-    }
-    const sunrise = dailyForecastDay.sunEvents?.sunriseTime;
-    console.log('sunrise:', sunrise);
-    const sunset = dailyForecastDay.sunEvents?.sunsetTime;
-    console.log('sunset:', sunset);
-  }
+  const relativeHumidity: string = dailyForecastDay.daytimeForecast?.relativeHumidity !== undefined
+    ? fmtPct(dailyForecastDay.daytimeForecast.relativeHumidity)
+    : '';
 
-  // uv index
-  // humidity
-  // hourly details
+  const uvIndex: string = dailyForecastDay.daytimeForecast?.uvIndex !== undefined
+    ? `${dailyForecastDay.daytimeForecast.uvIndex} of 11`
+    : '';
+
+  const sunrise: string = dailyForecastDay.sunEvents?.sunriseTime !== undefined
+    ? `${formatTimeOfDay(dailyForecastDay.sunEvents.sunriseTime)}`
+    : '';
+
+  const sunset: string = dailyForecastDay.sunEvents?.sunsetTime !== undefined
+    ? `${formatTimeOfDay(dailyForecastDay.sunEvents.sunsetTime)}`
+    : '';
 
   return (
-    <>Placeholder details</>
+    <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap: "nowrap", ml: 1, whiteSpace: "nowrap" }}>
+
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+        <OpacityIcon fontSize="small" />
+        <Typography variant="body2">Humidity {relativeHumidity}</Typography>
+      </Stack>
+
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+        <WbSunnyIcon fontSize="small" />
+        <Typography variant="body2">UV Index {uvIndex}</Typography>
+      </Stack>
+
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+        <WbSunnyIcon fontSize="small" />
+        <Typography variant="body2">Sunrise {sunrise}</Typography>
+      </Stack>
+
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+        <WbTwilightIcon fontSize="small" />
+        <Typography variant="body2">Sunset {sunset}</Typography>
+      </Stack>
+
+    </Stack>
   );
 }
 
