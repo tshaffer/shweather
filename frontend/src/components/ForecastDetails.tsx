@@ -1,6 +1,8 @@
 import WbTwilightIcon from '@mui/icons-material/WbTwilight';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import OpacityIcon from '@mui/icons-material/Opacity';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { DailyForecastDay } from "../types";
 import { Stack, Typography } from '@mui/material';
@@ -11,6 +13,20 @@ const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
 function formatTimeOfDay(isoString: string): string {
   return dayjs(isoString).format("h:mm a");
 }
+
+export const SunriseIcon: React.FC = () => (
+  <Stack alignItems="center" spacing={-1}>
+    <ArrowUpwardIcon fontSize="small" />
+    <WbTwilightIcon fontSize="small" />
+  </Stack>
+);
+
+export const SunsetIcon: React.FC = () => (
+  <Stack alignItems="center" spacing={-1}>
+    <ArrowDownwardIcon fontSize="small" />
+    <WbTwilightIcon fontSize="small" />
+  </Stack>
+);
 
 export default function ForecastDetails({ dailyForecastDay }: { dailyForecastDay: DailyForecastDay }) {
 
@@ -44,12 +60,12 @@ export default function ForecastDetails({ dailyForecastDay }: { dailyForecastDay
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
-        <WbSunnyIcon fontSize="small" />
+        <SunriseIcon />
         <Typography variant="body2">Sunrise {sunrise}</Typography>
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
-        <WbTwilightIcon fontSize="small" />
+        <SunsetIcon />
         <Typography variant="body2">Sunset {sunset}</Typography>
       </Stack>
 
