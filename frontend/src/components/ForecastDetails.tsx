@@ -1,3 +1,5 @@
+import * as React from 'react';
+import { Box } from '@mui/material';
 import WbTwilightIcon from '@mui/icons-material/WbTwilight';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import OpacityIcon from '@mui/icons-material/Opacity';
@@ -14,19 +16,65 @@ function formatTimeOfDay(isoString: string): string {
   return dayjs(isoString).format("h:mm a");
 }
 
-export const SunriseIcon: React.FC = () => (
-  <Stack alignItems="center" spacing={-1}>
-    <ArrowUpwardIcon fontSize="small" />
-    <WbTwilightIcon fontSize="small" />
-  </Stack>
-);
+type IconSize = 'inherit' | 'small' | 'medium' | 'large';
 
-export const SunsetIcon: React.FC = () => (
-  <Stack alignItems="center" spacing={-1}>
-    <ArrowDownwardIcon fontSize="small" />
-    <WbTwilightIcon fontSize="small" />
-  </Stack>
-);
+interface SunArrowIconProps {
+  fontSize?: IconSize;   // default 'small' to match your screenshot scale
+  color?: 'inherit' | 'action' | 'disabled' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+}
+
+/** Sunrise: sun with up arrow centered above the horizon */
+export const SunriseIcon: React.FC<SunArrowIconProps> = ({
+  fontSize = 'small',
+  color = 'inherit',
+}) => {
+  // Slight tweaks so the arrow sits neatly above the sun across sizes
+  const arrowPx = { small: 14, medium: 18, large: 22, inherit: 16 }[fontSize];
+  const topNudge = { small: -2, medium: -3, large: -4, inherit: -2 }[fontSize];
+
+  return (
+    <Box sx={{ position: 'relative', lineHeight: 0, display: 'inline-block' }}>
+      <WbTwilightIcon fontSize={fontSize} color={color} />
+      <ArrowUpwardIcon
+        color={color}
+        sx={{
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          top: topNudge,
+          fontSize: arrowPx, // make arrow a touch smaller than the sun
+          pointerEvents: 'none',
+        }}
+      />
+    </Box>
+  );
+};
+
+/** Sunset: sun with down arrow centered over the sun */
+export const SunsetIcon: React.FC<SunArrowIconProps> = ({
+  fontSize = 'small',
+  color = 'inherit',
+}) => {
+  const arrowPx = { small: 14, medium: 18, large: 22, inherit: 16 }[fontSize];
+  const topNudge = { small: 2, medium: 3, large: 4, inherit: 2 }[fontSize];
+
+  return (
+    <Box sx={{ position: 'relative', lineHeight: 0, display: 'inline-block' }}>
+      <WbTwilightIcon fontSize={fontSize} color={color} />
+      <ArrowDownwardIcon
+        color={color}
+        sx={{
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          top: topNudge, // sits just above the sun line
+          fontSize: arrowPx,
+          pointerEvents: 'none',
+        }}
+      />
+    </Box>
+  );
+};
 
 export default function ForecastDetails({ dailyForecastDay }: { dailyForecastDay: DailyForecastDay }) {
 
