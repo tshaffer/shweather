@@ -12,8 +12,7 @@ import { selectDailyForecasts, selectForecastView, selectHourlyForecasts } from 
 import HourlyForecast from "./HourlyForecast";
 import HourlyForecastDetails from "./HourlyForecastDetails";
 
-// near the top of Forecast.tsx
-const COL = {
+const DAILY_COLUMNS = {
   date: 160,
   temps: 72,
   condition: 180,
@@ -22,12 +21,24 @@ const COL = {
   toggle: 36,
 };
 
+const DAILY_DETAILED_COLUMNS = {
+  humidity: 180,
+  uvIndex: 180,
+  sunrise: 160,
+  sunset: 64,
+};
+
 const HOURLY_COLUMNS = {
   timeOfDay: 160,
   temp: 72,
   condition: 180,
   precip: 64,
   wind: 88,
+};
+
+const HOURLY_DETAILED_COLUMNS = {
+  humidity: 180,
+  uvIndex: 180,
 };
 
 export default function Forecast() {
@@ -64,19 +75,28 @@ export default function Forecast() {
               onToggle={() => toggleRow(idx)}
               key={dailyKey}
               columnWidths={{
-                date: COL.date,
-                temps: COL.temps,
-                condition: COL.condition,
-                precip: COL.precip,
-                wind: COL.wind,
-                toggle: COL.toggle,
+                date: DAILY_COLUMNS.date,
+                temps: DAILY_COLUMNS.temps,
+                condition: DAILY_COLUMNS.condition,
+                precip: DAILY_COLUMNS.precip,
+                wind: DAILY_COLUMNS.wind,
+                toggle: DAILY_COLUMNS.toggle,
               }}
             />
           </Box>
         </Stack>
 
         <Collapse in={!!openRows[idx]} timeout="auto" unmountOnExit>
-          <ForecastDetails dailyForecastDay={dailyForecast} key={dailyKey} />
+          <ForecastDetails
+            dailyForecastDay={dailyForecast}
+            key={dailyKey}
+            columnWidths={{
+              humidity: DAILY_DETAILED_COLUMNS.humidity,
+              uvIndex: DAILY_DETAILED_COLUMNS.uvIndex,
+              sunrise: DAILY_DETAILED_COLUMNS.sunrise,
+              sunset: DAILY_DETAILED_COLUMNS.sunset,
+            }}
+          />
         </Collapse>
 
 
@@ -119,7 +139,7 @@ export default function Forecast() {
                 condition: HOURLY_COLUMNS.condition,
                 precip: HOURLY_COLUMNS.precip,
                 wind: HOURLY_COLUMNS.wind,
-                toggle: COL.toggle,
+                toggle: DAILY_COLUMNS.toggle,
 
               }}
             />
@@ -127,7 +147,14 @@ export default function Forecast() {
         </Stack>
 
         <Collapse in={!!openRows[idx]} timeout="auto" unmountOnExit>
-          <HourlyForecastDetails hourlyForecast={hourlyForecast} key={hourKey} />
+          <HourlyForecastDetails
+            hourlyForecast={hourlyForecast}
+            key={hourKey}
+            columnWidths={{
+              humidity: HOURLY_DETAILED_COLUMNS.humidity,
+              uvIndex: HOURLY_DETAILED_COLUMNS.uvIndex,
+            }}
+          />
         </Collapse>
       </Box>
     );

@@ -40,16 +40,16 @@ export default function DailyForecast({
   dailyForecastDay: DailyForecastDay,
   open: boolean,
   onToggle: () => void,
-  columnWidths?: Partial<{ date: number, temps: number; condition: number; precip: number; wind: number; toggle: number }>
+  columnWidths: Partial<{ date: number, temps: number; condition: number; precip: number; wind: number; toggle: number }>
 }) {
 
   const w = {
-    date: columnWidths?.date ?? 180,
-    temps: columnWidths?.temps ?? 72,
-    condition: columnWidths?.condition ?? 160,
-    precip: columnWidths?.precip ?? 64,
-    wind: columnWidths?.wind ?? 88,
-    toggle: columnWidths?.toggle ?? 36,
+    date: columnWidths.date,
+    temps: columnWidths.temps,
+    condition: columnWidths.condition,
+    precip: columnWidths.precip,
+    wind: columnWidths.wind,
+    toggle: columnWidths.toggle,
   };
 
   const daytimeForecast = dailyForecastDay.daytimeForecast;

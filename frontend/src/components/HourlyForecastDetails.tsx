@@ -6,20 +6,30 @@ import { ForecastHour } from "../types";
 
 const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
 
-export default function HourlyForecastDetails({ hourlyForecast }: { hourlyForecast: ForecastHour }) {
+export default function HourlyForecastDetails({
+  hourlyForecast,
+  columnWidths
+}: {
+  hourlyForecast: ForecastHour,
+  columnWidths: Partial<{ humidity: number; uvIndex: number }>
+}) {
 
+  const w = {
+    humidity: columnWidths.humidity,
+    uvIndex: columnWidths.uvIndex,
+  };
   const relativeHumidity = hourlyForecast.relativeHumidity;
   const uvIndex = hourlyForecast.uvIndex;
 
   return (
     <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap: "nowrap", ml: 1, whiteSpace: "nowrap" }}>
 
-      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.humidity, flexShrink: 0 }}>
         <OpacityIcon fontSize="small" />
         <Typography variant="body2">Humidity {fmtPct(relativeHumidity)}</Typography>
       </Stack>
 
-      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.uvIndex, flexShrink: 0 }}>
         <WbSunnyIcon fontSize="small" />
         <Typography variant="body2">UV Index {uvIndex} of 11</Typography>
       </Stack>

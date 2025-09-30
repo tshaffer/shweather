@@ -76,7 +76,20 @@ export const SunsetIcon: React.FC<SunArrowIconProps> = ({
   );
 };
 
-export default function ForecastDetails({ dailyForecastDay }: { dailyForecastDay: DailyForecastDay }) {
+export default function ForecastDetails({ 
+  dailyForecastDay,
+  columnWidths,
+ }: { 
+  dailyForecastDay: DailyForecastDay,
+  columnWidths: Partial<{ humidity: number; uvIndex: number; sunrise: number; sunset: number }>
+ }) {
+
+  const w = {
+    humidity: columnWidths.humidity,
+    uvIndex: columnWidths.uvIndex,
+    sunrise: columnWidths.sunrise,
+    sunset: columnWidths.sunset,
+  };
 
   const relativeHumidity: string = dailyForecastDay.daytimeForecast?.relativeHumidity !== undefined
     ? fmtPct(dailyForecastDay.daytimeForecast.relativeHumidity)
@@ -97,22 +110,22 @@ export default function ForecastDetails({ dailyForecastDay }: { dailyForecastDay
   return (
     <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap: "nowrap", ml: 1, whiteSpace: "nowrap" }}>
 
-      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.humidity, flexShrink: 0 }}>
         <OpacityIcon fontSize="small" />
         <Typography variant="body2">Humidity {relativeHumidity}</Typography>
       </Stack>
 
-      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.uvIndex, flexShrink: 0 }}>
         <WbSunnyIcon fontSize="small" />
         <Typography variant="body2">UV Index {uvIndex}</Typography>
       </Stack>
 
-      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.sunrise, flexShrink: 0 }}>
         <SunriseIcon />
         <Typography variant="body2">Sunrise {sunrise}</Typography>
       </Stack>
 
-      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: 150, flexShrink: 0 }}>
+      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ width: w.sunset, flexShrink: 0 }}>
         <SunsetIcon />
         <Typography variant="body2">Sunset {sunset}</Typography>
       </Stack>

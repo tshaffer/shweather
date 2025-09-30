@@ -41,12 +41,12 @@ export default function HourlyForecast({
 }) {
 
   const w = {
-    timeOfDay: columnWidths?.timeOfDay ?? 180,
-    temp: columnWidths?.temp ?? 72,
-    condition: columnWidths?.condition ?? 160,
-    precip: columnWidths?.precip ?? 64,
-    wind: columnWidths?.wind ?? 88,
-    toggle: columnWidths?.toggle ?? 36,
+    timeOfDay: columnWidths.timeOfDay,
+    temp: columnWidths.temp,
+    condition: columnWidths.condition,
+    precip: columnWidths.precip,
+    wind: columnWidths.wind,
+    toggle: columnWidths.toggle,
   };
 
   const temperature = fmtTempF(hourlyForecast.temperature.degrees);
