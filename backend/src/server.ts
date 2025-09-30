@@ -36,6 +36,14 @@ async function main() {
   if (fs.existsSync(clientDir)) {
     app.use(express.static(clientDir));
 
+    app.get(/^(?!(?:\/api\/|\/healthz$|\/env-config\.json$)).*/, (req, res, next) => {
+      // Only treat as SPA route if the client accepts HTML.
+      if (req.method === 'GET' && req.accepts('html')) {
+        return res.sendFile(path.join(clientDir, 'index.html'));
+      }
+      return next();
+    });
+    
     // Catch-all: serve index.html for all non-API, non-health, non-env requests
     app.get(/^(?!(?:\/api\/|\/healthz$|\/env-config\.json$)).*/, (req, res) => {
       res.sendFile(path.join(clientDir, 'index.html'));

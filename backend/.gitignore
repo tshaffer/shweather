@@ -1,7 +1,6 @@
 node_modules/
 dist/
 src/config/config.env
-build/
-public/uploads
+build/bundle.js.map
 .env
 backups/
