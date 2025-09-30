@@ -8,12 +8,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { DailyForecastDay, fmtPct } from "../types";
 import { Stack, Typography } from '@mui/material';
-import dayjs from 'dayjs';
-
-
-function formatTimeOfDayFromISO(isoString: string): string {
-  return dayjs(isoString).format("h:mm a");
-}
+import { formatTimeOfDayFromISO } from '../utilities';
 
 type IconSize = 'inherit' | 'small' | 'medium' | 'large';
 

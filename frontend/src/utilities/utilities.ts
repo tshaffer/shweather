@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { TimeOfDay } from "../types";
 
 export function timeOfDayToDate(timeOfDay: TimeOfDay): Date {
@@ -22,3 +23,8 @@ export const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
 
 export const toMph = (kph?: number) =>
   typeof kph === "number" ? Math.round(kph * 0.621371) : undefined;
+
+export function formatTimeOfDayFromISO(isoString: string): string {
+  return dayjs(isoString).format("h:mm a");
+}
+
