@@ -6,13 +6,12 @@ import OpacityIcon from '@mui/icons-material/Opacity';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { DailyForecastDay } from "../types";
+import { DailyForecastDay, fmtPct } from "../types";
 import { Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 
-const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
 
-function formatTimeOfDay(isoString: string): string {
+function formatTimeOfDayFromISO(isoString: string): string {
   return dayjs(isoString).format("h:mm a");
 }
 
@@ -100,11 +99,11 @@ export default function ForecastDetails({
     : '';
 
   const sunrise: string = dailyForecastDay.sunEvents?.sunriseTime !== undefined
-    ? `${formatTimeOfDay(dailyForecastDay.sunEvents.sunriseTime)}`
+    ? `${formatTimeOfDayFromISO(dailyForecastDay.sunEvents.sunriseTime)}`
     : '';
 
   const sunset: string = dailyForecastDay.sunEvents?.sunsetTime !== undefined
-    ? `${formatTimeOfDay(dailyForecastDay.sunEvents.sunsetTime)}`
+    ? `${formatTimeOfDayFromISO(dailyForecastDay.sunEvents.sunsetTime)}`
     : '';
 
   return (

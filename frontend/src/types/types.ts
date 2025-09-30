@@ -1,4 +1,5 @@
 import { DailyForecastDay, ForecastHour, GoogleGeometry } from "./googleInterfaces";
+import { WbSunny as SunnyIcon } from "@mui/icons-material";
 
 export type ForecastView = 'daily' | 'hourly';
 
@@ -18,3 +19,10 @@ export interface ShWeatherLocation {
   friendlyPlaceName: string;
 }
 
+export type ConditionView = {
+  label: string;
+  iconUrl?: string;                 // from Google
+  FallbackIcon: typeof SunnyIcon;   // MUI fallback
+};
+
+export const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");

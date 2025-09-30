@@ -71,7 +71,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const placeNameUserInput = e.target.value;
 
-    console.log('handleInputChange: ', placeNameUserInput);
     onSetPlaceName(placeNameUserInput); // keep your controlled input in sync
 
     if (!autocompleteServiceRef.current) return;

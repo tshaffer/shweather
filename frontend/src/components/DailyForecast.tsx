@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
 import AirIcon from "@mui/icons-material/Air";
-import { DailyForecastDay, WeatherCondition } from "../types";
+import { ConditionView, DailyForecastDay, WeatherCondition } from "../types";
 import { fmtPct, fmtTempF, toMph } from "../utilities";
 import { WbSunny as SunnyIcon } from "@mui/icons-material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -14,11 +14,6 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import dayjs from "dayjs";
 
 // Derive a condition label + icon from the forecast.
-type ConditionView = {
-  label: string;
-  iconUrl?: string;                 // from Google
-  FallbackIcon: typeof SunnyIcon;   // MUI fallback
-};
 
 // ---------- Display helpers (compact, single-line) ----------
 

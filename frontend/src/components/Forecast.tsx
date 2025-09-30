@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { selectDailyForecasts, selectForecastView, selectHourlyForecasts } from "../redux";
 import HourlyForecast from "./HourlyForecast";
 import HourlyForecastDetails from "./HourlyForecastDetails";
+import { timeOfDayToDate } from "../utilities";
 
 const DAILY_COLUMNS = {
   date: 160,
@@ -104,21 +105,9 @@ export default function Forecast() {
     );
   }
 
-  function toDate(timeOfDay: TimeOfDay): Date {
-    return new Date(
-      timeOfDay.year,
-      timeOfDay.month - 1, // JS months are 0-based
-      timeOfDay.day,
-      timeOfDay.hours,
-      timeOfDay.minutes,
-      timeOfDay.seconds,
-      Math.floor((timeOfDay.nanos ?? 0) / 1_000_000) // nanos → ms
-    );
-  }
-
   const renderHourlyForecast = (hourlyForecast: ForecastHour, idx: number): JSX.Element => {
 
-    const hourKey = toDate(hourlyForecast.displayDateTime).toISOString();
+    const hourKey = timeOfDayToDate(hourlyForecast.displayDateTime).toISOString();
 
     return (
       <Box
@@ -168,17 +157,13 @@ export default function Forecast() {
     return hourlyForecasts.map((hourlyForecast, index) => renderHourlyForecast(hourlyForecast, index));
   }
 
-  console.log('Forecast render', forecastView);
-
   let forecastJSX: JSX.Element[] = [];
 
-  console.log('forecastJSX length before:', forecastJSX.length);
   if (forecastView === 'daily') {
     forecastJSX = renderDaysInForecast();
   } else {
     forecastJSX = renderHoursInForecast();
   }
-  console.log('forecastJSX length after:', forecastJSX.length);
 
   // at the bottom of Forecast.tsx
   return (

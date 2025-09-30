@@ -2,9 +2,7 @@ import { Stack, Typography } from "@mui/material";
 import OpacityIcon from '@mui/icons-material/Opacity';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
-import { ForecastHour } from "../types";
-
-const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
+import { fmtPct, ForecastHour } from "../types";
 
 export default function HourlyForecastDetails({
   hourlyForecast,
