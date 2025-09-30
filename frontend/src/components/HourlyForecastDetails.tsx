@@ -2,14 +2,14 @@ import { Stack, Typography } from "@mui/material";
 import OpacityIcon from '@mui/icons-material/Opacity';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
-import { fmtPct, ForecastHour } from "../types";
+import { fmtPct, ForecastHour, HourlyForecastDetailsColumnWidths } from "../types";
 
 export default function HourlyForecastDetails({
   hourlyForecast,
   columnWidths
 }: {
   hourlyForecast: ForecastHour,
-  columnWidths: Partial<{ humidity: number; uvIndex: number }>
+  columnWidths: HourlyForecastDetailsColumnWidths,
 }) {
 
   const w = {

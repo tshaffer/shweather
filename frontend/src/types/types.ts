@@ -1,4 +1,4 @@
-import { DailyForecastDay, ForecastHour, GoogleGeometry } from "./googleInterfaces";
+import { DailyForecastDay, ForecastHour, GoogleGeometry } from "./googleWeatherTypes";
 import { WbSunny as SunnyIcon } from "@mui/icons-material";
 
 export type ForecastView = 'daily' | 'hourly';
@@ -26,3 +26,33 @@ export type ConditionView = {
 };
 
 export const fmtPct = (n?: number) => (typeof n === "number" ? `${n}%` : "—");
+
+export interface DailyForecastDetailsColumnWidths {
+  humidity: number;
+  uvIndex: number;
+  sunrise: number;
+  sunset: number;
+}
+
+export interface HourlyForecastDetailsColumnWidths {
+  humidity: number;
+  uvIndex: number;
+}
+
+export interface DailyForecastColumnWidths {
+  date: number;
+  temps: number;
+  condition: number;
+  precip: number;
+  wind: number;
+  toggle: number;
+}
+
+export interface HourlyForecastColumnWidths {
+  timeOfDay: number; 
+  temp: number; 
+  condition: number; 
+  precip: number;  
+  wind: number; 
+  toggle: number;
+}

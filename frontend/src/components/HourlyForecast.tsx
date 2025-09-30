@@ -1,4 +1,4 @@
-import { ConditionView, ForecastHour, TimeOfDay, WeatherCondition } from '../types';
+import { ConditionView, ForecastHour, HourlyForecastColumnWidths, TimeOfDay, WeatherCondition } from '../types';
 import { Stack, Typography, Box, IconButton } from '@mui/material';
 import dayjs from 'dayjs';
 import { fmtPct, fmtTempF, toMph } from '../utilities';
@@ -28,7 +28,7 @@ export default function HourlyForecast({
   onToggle,
 }: {
   hourlyForecast: ForecastHour,
-  columnWidths: Partial<{ timeOfDay: number, temp: number; condition: number; precip: number; wind: number; toggle: number }>,
+  columnWidths: HourlyForecastColumnWidths,
   open: boolean,
   onToggle: () => void,
 }) {

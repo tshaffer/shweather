@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import WaterDropOutlinedIcon from "@mui/icons-material/WaterDropOutlined";
 import AirIcon from "@mui/icons-material/Air";
-import { ConditionView, DailyForecastDay, WeatherCondition } from "../types";
+import { ConditionView, DailyForecastColumnWidths, DailyForecastDay, WeatherCondition } from "../types";
 import { fmtPct, fmtTempF, toMph } from "../utilities";
 import { WbSunny as SunnyIcon } from "@mui/icons-material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -35,7 +35,7 @@ export default function DailyForecast({
   dailyForecastDay: DailyForecastDay,
   open: boolean,
   onToggle: () => void,
-  columnWidths: Partial<{ date: number, temps: number; condition: number; precip: number; wind: number; toggle: number }>
+  columnWidths: DailyForecastColumnWidths
 }) {
 
   const w = {

@@ -6,7 +6,7 @@ import OpacityIcon from '@mui/icons-material/Opacity';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { DailyForecastDay, fmtPct } from "../types";
+import { DailyForecastDay, DailyForecastDetailsColumnWidths, fmtPct } from "../types";
 import { Stack, Typography } from '@mui/material';
 import { formatTimeOfDayFromISO } from '../utilities';
 
@@ -70,13 +70,13 @@ export const SunsetIcon: React.FC<SunArrowIconProps> = ({
   );
 };
 
-export default function ForecastDetails({ 
+export default function DailyForecastDetails({
   dailyForecastDay,
   columnWidths,
- }: { 
+}: {
   dailyForecastDay: DailyForecastDay,
-  columnWidths: Partial<{ humidity: number; uvIndex: number; sunrise: number; sunset: number }>
- }) {
+  columnWidths: DailyForecastDetailsColumnWidths
+}) {
 
   const w = {
     humidity: columnWidths.humidity,

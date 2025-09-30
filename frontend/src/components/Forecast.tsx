@@ -4,7 +4,7 @@ import {
   Collapse,
 } from "@mui/material";
 import { DailyForecastDay, ForecastHour, ForecastView, TimeOfDay } from "../types";
-import ForecastDetails from "./ForecastDetails";
+import DailyForecastDetails from "./DailyForecastDetails";
 import DailyForecast from "./DailyForecast";
 import { JSX, useState } from "react";
 import { useSelector } from "react-redux";
@@ -88,7 +88,7 @@ export default function Forecast() {
         </Stack>
 
         <Collapse in={!!openRows[idx]} timeout="auto" unmountOnExit>
-          <ForecastDetails
+          <DailyForecastDetails
             dailyForecastDay={dailyForecast}
             key={dailyKey}
             columnWidths={{
