@@ -1,6 +1,7 @@
 import { JSX, useState } from "react";
 import { useSelector } from "react-redux";
 import {
+  Backdrop, CircularProgress,
   Box,
   Stack,
   Collapse,
@@ -10,7 +11,7 @@ import dayjs from "dayjs";
 import { DailyForecastDay, ForecastHour, ForecastView, TimeOfDay } from "../types";
 import DailyForecastDetails from "./DailyForecastDetails";
 import DailyForecast from "./DailyForecast";
-import { selectDailyForecasts, selectForecastView, selectHourlyForecasts } from "../redux";
+import { selectDailyForecasts, selectForecastView, selectHourlyForecasts, selectIsLoadingForecast } from "../redux";
 import HourlyForecast from "./HourlyForecast";
 import HourlyForecastDetails from "./HourlyForecastDetails";
 import { timeOfDayToDate } from "../utilities";
@@ -50,6 +51,7 @@ export default function Forecast() {
 
   const forecast: DailyForecastDay[] = useSelector(selectDailyForecasts);
   const hourlyForecasts: ForecastHour[] = useSelector(selectHourlyForecasts);
+  const loading: boolean = useSelector(selectIsLoadingForecast);
 
   const [openRows, setOpenRows] = useState<boolean[]>([]);
   const toggleRow = (i: number) =>
@@ -213,7 +215,14 @@ export default function Forecast() {
 
   // at the bottom of Forecast.tsx
   return (
-    <Box>
+    <Box position="relative">
+      <Backdrop
+        open={loading}
+        sx={{ color: '#fff', zIndex: (t) => t.zIndex.drawer + 1 }}
+      >
+        <CircularProgress />
+      </Backdrop>
+
       {forecastJSX}
     </Box>
   );

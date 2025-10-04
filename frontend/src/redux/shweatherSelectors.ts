@@ -11,3 +11,16 @@ export const selectDailyForecasts = (state: RootState): DailyForecastDay[] => (s
 export const selectHourlyForecasts = (state: RootState): ForecastHour[] => (state.shweather).hourlyForecasts;
 export const selectRecentLocations = (state: RootState): ShWeatherLocation[] => state.shweather.recentLocations;
 export const selectLastLocation = (state: RootState): ShWeatherLocation | null => state.shweather.lastLocation;
+
+export const selectIsLoadingDaily = (state: RootState) =>
+  state.shweather.isLoadingDaily;
+
+export const selectIsLoadingHourly = (state: RootState) =>
+  state.shweather.isLoadingHourly;
+
+export const selectIsLoadingForecast = (state: RootState) => {
+  const view = state.shweather.forecastView;
+  return view === 'hourly'
+    ? state.shweather.isLoadingHourly
+    : state.shweather.isLoadingDaily;
+};

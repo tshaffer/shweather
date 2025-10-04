@@ -3,19 +3,23 @@ import axios from 'axios';
 import { DailyForecastDay, ForecastDaysResponse, ForecastHour, ForecastHoursResponse, ShWeatherLocation } from '../types';
 
 interface ShWeatherState {
-  forecastView?: 'daily' | 'hourly'; // NEW
+  forecastView?: 'daily' | 'hourly';
   dailyForecasts: DailyForecastDay[];
+  hourlyForecasts: ForecastHour[];
   lastLocation: ShWeatherLocation | null;
   recentLocations: ShWeatherLocation[];
-  hourlyForecasts: ForecastHour[];
+  isLoadingDaily: boolean;
+  isLoadingHourly: boolean;
 }
 
 const initialState: ShWeatherState = {
-  forecastView: 'daily', // NEW
+  forecastView: 'daily',
   dailyForecasts: [],
   hourlyForecasts: [],
   lastLocation: null,
   recentLocations: [],
+  isLoadingDaily: false,
+  isLoadingHourly: false,
 };
 
 export const fetchDailyForecast = createAsyncThunk(
@@ -63,15 +67,27 @@ const shweatherSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchDailyForecast.fulfilled, (state, action: PayloadAction<any>) => {
-        const fetchForecastResponse: ForecastDaysResponse = action.payload;
-        const { days: forecast } = fetchForecastResponse;
-        state.dailyForecasts = forecast.filter(d => !isBeforeToday(d.displayDate));
+      .addCase(fetchDailyForecast.pending, (state) => {
+        state.isLoadingDaily = true;
       })
-      .addCase(fetchHourlyForecast.fulfilled, (state, action: PayloadAction<any>) => {
-        const fetchForecastResponse: ForecastHoursResponse = action.payload;
-        const { hours } = fetchForecastResponse;
+      .addCase(fetchDailyForecast.fulfilled, (state, action) => {
+        state.isLoadingDaily = false;
+        const { days } = action.payload as ForecastDaysResponse; // keep your current assignment
+        state.dailyForecasts = days;
+      })
+      .addCase(fetchDailyForecast.rejected, (state) => {
+        state.isLoadingDaily = false;
+      })
+      .addCase(fetchHourlyForecast.pending, (state) => {
+        state.isLoadingHourly = true;
+      })
+      .addCase(fetchHourlyForecast.fulfilled, (state, action) => {
+        state.isLoadingHourly = false;
+        const { hours } = action.payload as ForecastHoursResponse; // keep your current assignment
         state.hourlyForecasts = hours;
+      })
+      .addCase(fetchHourlyForecast.rejected, (state) => {
+        state.isLoadingHourly = false;
       });
   },
 });
