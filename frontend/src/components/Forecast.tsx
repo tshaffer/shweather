@@ -1,13 +1,15 @@
+import { JSX, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Box,
   Stack,
   Collapse,
+  Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
 import { DailyForecastDay, ForecastHour, ForecastView, TimeOfDay } from "../types";
 import DailyForecastDetails from "./DailyForecastDetails";
 import DailyForecast from "./DailyForecast";
-import { JSX, useState } from "react";
-import { useSelector } from "react-redux";
 import { selectDailyForecasts, selectForecastView, selectHourlyForecasts } from "../redux";
 import HourlyForecast from "./HourlyForecast";
 import HourlyForecastDetails from "./HourlyForecastDetails";
@@ -57,6 +59,20 @@ export default function Forecast() {
       return next;
     });
 
+  function isSameDay(a: Date, b: Date): boolean {
+    return a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+  }
+
+  function dayHeaderLabel(d: Date): string {
+    // "Wednesday, Oct 8"
+    return dayjs(d).format("dddd, MMM D");
+  }
+
+  function dayKey(d: Date): string {
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  }
 
   const renderDailyForecast = (dailyForecast: DailyForecastDay, idx: number): JSX.Element => {
 
@@ -154,8 +170,38 @@ export default function Forecast() {
   }
 
   const renderHoursInForecast = (): JSX.Element[] => {
-    return hourlyForecasts.map((hourlyForecast, index) => renderHourlyForecast(hourlyForecast, index));
-  }
+    const out: JSX.Element[] = [];
+
+    for (let i = 0; i < hourlyForecasts.length; i++) {
+      const hf = hourlyForecasts[i];
+      const curr = timeOfDayToDate(hf.displayDateTime);
+
+      const needHeader =
+        i === 0 ||
+        !isSameDay(curr, timeOfDayToDate(hourlyForecasts[i - 1].displayDateTime));
+
+      if (needHeader) {
+        out.push(
+          <Box
+            key={`hdr-${dayKey(curr)}`}
+            sx={{
+              px: 1,
+              pt: i === 0 ? 0 : 1.25, // a bit more space when starting a new day
+              pb: 0.5,
+            }}
+          >
+            <Typography variant="subtitle1" fontWeight={700}>
+              {dayHeaderLabel(curr)}
+            </Typography>
+          </Box>
+        );
+      }
+
+      out.push(renderHourlyForecast(hf, i));
+    }
+
+    return out;
+  };
 
   let forecastJSX: JSX.Element[] = [];
 
